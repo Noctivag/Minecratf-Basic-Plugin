@@ -1,0 +1,77 @@
+# Plugin Hauptkonfiguration
+
+# Allgemeine Einstellungen
+settings:
+  language: de_DE
+  auto-save-interval: 300 # Sekunden
+  debug-mode: false
+  check-player-exists: true # Prüft ob Spieler existiert bei /joinmessage set
+
+# Join-Message Einstellungen
+join-messages:
+  default-message: "&7[&a+&7] &e%player% &7hat den Server betreten"
+  format:
+    prefix: "&8[&6Server&8] "
+    allow-colors: true
+    max-length: 100
+  examples:
+    - "&7[&a+&7] &e%player%"
+    - "&8[&6★&8] &6%player%"
+    - "&#FF0000[VIP] &e%player%"
+
+# Event-Einstellungen
+events:
+  dragon:
+    interval: 7200 # Alle 2 Stunden
+    duration: 900 # 15 Minuten
+    min-players: 3
+    rewards:
+      points: 500
+      items:
+        - DRAGON_EGG
+        - ELYTRA
+  wither:
+    interval: 3600 # Jede Stunde
+    duration: 600 # 10 Minuten
+    min-players: 2
+    rewards:
+      points: 300
+      items:
+        - NETHER_STAR
+        - BEACON
+
+# Command-Einstellungen
+commands:
+  heal:
+    cooldown: 300 # 5 Minuten
+    cost: 100 # Economy-Kosten
+  nick:
+    min-length: 3
+    max-length: 16
+    allow-colors: true
+    blocked-names:
+      - Admin
+      - Owner
+      - Staff
+
+# Partikel-Effekte
+particles:
+  update-interval: 5 # Ticks
+  max-particles: 10
+  effects:
+    HEART:
+      permission: "cosmetics.hearts"
+      cost: 1000
+    FLAME:
+      permission: "cosmetics.flame"
+      cost: 1500
+    PORTAL:
+      permission: "cosmetics.portal"
+      cost: 2000
+
+# Nachrichten-Einstellungen
+messages:
+  prefix: "&8[&6Server&8] "
+  join-message: "&7[&a+&7] &e%player%"
+  quit-message: "&7[&c-&7] &e%player%"
+  no-permission: "&cDu hast keine Berechtigung für diese Aktion!"

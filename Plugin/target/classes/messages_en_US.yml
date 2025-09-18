@@ -1,0 +1,25 @@
+# English language file
+prefix:
+  set: "&aYour prefix has been set to {0}"
+  remove: "&aYour prefix has been removed"
+  no-permission: "&cYou don't have permission for this"
+
+nickname:
+  set: "&aYour nickname has been set to {0}"
+  remove: "&aYour nickname has been removed"
+  no-permission: "&cYou don't have permission for this"
+
+join-message:
+  set: "&aJoin message for {0} has been set to: {1}"
+  remove: "&aJoin message for {0} has been removed"
+  enable: "&aJoin messages for {0} have been enabled"
+  disable: "&cJoin messages for {0} have been disabled"
+  default-set: "&aDefault join message has been set to: {0}"
+  no-custom: "&c{0} doesn't have a custom join message"
+
+commands:
+  players-only: "&cOnly players can use this command"
+  wrong-usage: "&cWrong usage. Use: {0}"
+
+workbench:
+  no-permission: "&cYou don't have permission to open this workbench"

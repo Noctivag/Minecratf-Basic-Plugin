@@ -1,0 +1,159 @@
+name: Plugin
+version: '1.0-SNAPSHOT'
+main: de.noctivag.plugin.Plugin
+api-version: '1.21'
+commands:
+  prefix:
+    description: Setzt deinen Chat-Prefix
+    usage: /prefix <Text>
+  unprefix:
+    description: Entfernt deinen Chat-Prefix
+    usage: /unprefix
+  nick:
+    description: Ändert deinen Chat-Namen
+    usage: /nick <Name>
+  unnick:
+    description: Entfernt deinen Nickname
+    usage: /unnick
+  craftingtable:
+    description: Öffnet eine Werkbank
+    usage: /craftingtable
+    aliases: [craft, workbench]
+  anvil:
+    description: Öffnet einen Amboss
+    usage: /anvil
+  enderchest:
+    description: Öffnet deine Endertruhe
+    usage: /enderchest
+    aliases: [ec]
+  grindstone:
+    description: Öffnet einen Schleifstein
+    usage: /grindstone
+  smithingtable:
+    description: Öffnet einen Schmiedetisch
+    usage: /smithingtable
+  stonecutter:
+    description: Öffnet einen Steinsäger
+    usage: /stonecutter
+  loom:
+    description: Öffnet einen Webstuhl
+    usage: /loom
+  cartography:
+    description: Öffnet einen Kartentisch
+    usage: /cartography
+    aliases: [cartographytable]
+  heal:
+    description: Heilt dich vollständig
+    usage: /heal
+  feed:
+    description: Stillt deinen Hunger
+    usage: /feed
+  clearinventory:
+    description: Leert dein Inventar
+    usage: /clearinventory
+    aliases: [ci]
+  fly:
+    description: Aktiviert/Deaktiviert den Flugmodus
+    usage: /fly
+  gmc:
+    description: Setzt deinen Spielmodus auf Kreativ
+    usage: /gmc
+  gms:
+    description: Setzt deinen Spielmodus auf Überleben
+    usage: /gms
+  gmsp:
+    description: Setzt deinen Spielmodus auf Zuschauer
+    usage: /gmsp
+  joinmessage:
+    description: Verwaltet die Join-Nachrichten
+    usage: |
+      /joinmessage set <Spieler> <Nachricht> - Setzt Join-Nachricht
+      /joinmessage remove <Spieler> - Entfernt Join-Nachricht
+      /joinmessage toggle <Spieler> - Schaltet Join-Nachricht um
+      /joinmessage enable/disable <Spieler> - Aktiviert/Deaktiviert
+    aliases: [jmsg, joinmsg]
+  menu:
+    description: Öffnet das Hauptmenü
+    usage: /menu
+    aliases: [servermenu, gui]
+
+permissions:
+  basiccommands.*:
+    description: Gibt Zugriff auf alle Basic-Commands
+    default: op
+    children:
+      basiccommands.heal: true
+      basiccommands.feed: true
+      basiccommands.clearinventory: true
+      basiccommands.fly: true
+      basiccommands.gamemode.*: true
+  basiccommands.heal:
+    description: Erlaubt die Nutzung des /heal Befehls
+    default: op
+  basiccommands.feed:
+    description: Erlaubt die Nutzung des /feed Befehls
+    default: op
+  basiccommands.clearinventory:
+    description: Erlaubt die Nutzung des /clearinventory Befehls
+    default: op
+  basiccommands.fly:
+    description: Erlaubt die Nutzung des /fly Befehls
+    default: op
+  basiccommands.gamemode.*:
+    description: Erlaubt die Nutzung aller Gamemode-Befehle
+    default: op
+    children:
+      basiccommands.gamemode.creative: true
+      basiccommands.gamemode.survival: true
+      basiccommands.gamemode.spectator: true
+  basiccommands.gamemode.creative:
+    description: Erlaubt die Nutzung des /gmc Befehls
+    default: op
+  basiccommands.gamemode.survival:
+    description: Erlaubt die Nutzung des /gms Befehls
+    default: op
+  basiccommands.gamemode.spectator:
+    description: Erlaubt die Nutzung des /gmsp Befehls
+    default: op
+  workbench.*:
+    description: Gibt Zugriff auf alle Werkbank-Befehle
+    default: true
+    children:
+      workbench.craftingtable: true
+      workbench.anvil: true
+      workbench.enderchest: true
+      workbench.grindstone: true
+      workbench.smithingtable: true
+      workbench.stonecutter: true
+      workbench.loom: true
+      workbench.cartography: true
+  workbench.craftingtable:
+    description: Erlaubt die Nutzung der Werkbank
+    default: true
+  workbench.anvil:
+    description: Erlaubt die Nutzung des Amboss
+    default: true
+  workbench.enderchest:
+    description: Erlaubt die Nutzung der Endertruhe
+    default: true
+  workbench.grindstone:
+    description: Erlaubt die Nutzung des Schleifsteins
+    default: true
+  workbench.smithingtable:
+    description: Erlaubt die Nutzung des Schmiedetischs
+    default: true
+  workbench.stonecutter:
+    description: Erlaubt die Nutzung des Steinsägers
+    default: true
+  workbench.loom:
+    description: Erlaubt die Nutzung des Webstuhls
+    default: true
+  workbench.cartography:
+    description: Erlaubt die Nutzung des Kartentischs
+    default: true
+  plugin.joinmessage:
+    description: Erlaubt das Verwalten von Join-Nachrichten
+    default: op
+  plugin.cosmetics:
+    description: Erlaubt die Nutzung von Partikeleffekten
+    default: true

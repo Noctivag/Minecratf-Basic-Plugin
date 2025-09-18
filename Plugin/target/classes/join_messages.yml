@@ -1,0 +1,10 @@
+# Join-Nachrichten Konfiguration
+# Verfügbare Platzhalter: %player% - Name des Spielers
+
+# Standard Join-Nachricht
+default-message: "&7[&a+&7] &e%player% &7hat den Server betreten"
+
+# Benutzerdefinierte Nachrichten für bestimmte Spieler
+custom-messages:
+  example:
+    message: "&7[&6★&7] &6%player% &7ist dem Spiel beigetreten"

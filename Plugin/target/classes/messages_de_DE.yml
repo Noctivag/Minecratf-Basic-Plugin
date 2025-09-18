@@ -1,0 +1,25 @@
+# Deutsche Sprachdatei
+prefix:
+  set: "&aDein Prefix wurde zu {0} gesetzt"
+  remove: "&aDein Prefix wurde entfernt"
+  no-permission: "&cDu hast keine Berechtigung dafür"
+
+nickname:
+  set: "&aDein Nickname wurde zu {0} gesetzt"
+  remove: "&aDein Nickname wurde entfernt"
+  no-permission: "&cDu hast keine Berechtigung dafür"
+
+join-message:
+  set: "&aJoin-Nachricht für {0} wurde gesetzt zu: {1}"
+  remove: "&aJoin-Nachricht für {0} wurde entfernt"
+  enable: "&aJoin-Nachrichten für {0} wurden aktiviert"
+  disable: "&cJoin-Nachrichten für {0} wurden deaktiviert"
+  default-set: "&aStandard Join-Nachricht wurde gesetzt zu: {0}"
+  no-custom: "&cFür {0} existiert keine benutzerdefinierte Join-Nachricht"
+
+commands:
+  players-only: "&cNur Spieler können diesen Befehl nutzen"
+  wrong-usage: "&cFalsche Verwendung. Nutze: {0}"
+
+workbench:
+  no-permission: "&cDu hast keine Berechtigung diese Werkbank zu öffnen"
