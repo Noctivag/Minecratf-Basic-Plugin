@@ -7,9 +7,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WarpManager {
     private final JavaPlugin plugin;
@@ -19,7 +19,7 @@ public class WarpManager {
     public WarpManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.warpsFile = new File(plugin.getDataFolder(), "warps.yml");
-        this.warps = new HashMap<>();
+        this.warps = new ConcurrentHashMap<>();
         loadWarps();
     }
 

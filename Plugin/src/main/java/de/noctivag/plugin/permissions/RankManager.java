@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
@@ -25,8 +26,8 @@ public class RankManager {
 
     public RankManager(Plugin plugin) {
         this.plugin = plugin;
-        this.ranks = new HashMap<>();
-        this.playerRanks = new HashMap<>();
+        this.ranks = new ConcurrentHashMap<>();
+        this.playerRanks = new ConcurrentHashMap<>();
         this.ranksFile = new File(plugin.getDataFolder(), "ranks.yml");
         this.playerRanksFile = new File(plugin.getDataFolder(), "player_ranks.yml");
         this.defaultRank = "default";
@@ -144,9 +145,13 @@ public class RankManager {
         
         if (playersSection != null) {
             for (String uuidStr : playersSection.getKeys(false)) {
-                UUID uuid = UUID.fromString(uuidStr);
-                List<String> rankNames = playersSection.getStringList(uuidStr);
-                playerRanks.put(uuid, new HashSet<>(rankNames));
+                try {
+                    UUID uuid = UUID.fromString(uuidStr);
+                    List<String> rankNames = playersSection.getStringList(uuidStr);
+                    playerRanks.put(uuid, new HashSet<>(rankNames));
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Invalid UUID in player_ranks.yml: " + uuidStr);
+                }
             }
         }
     }

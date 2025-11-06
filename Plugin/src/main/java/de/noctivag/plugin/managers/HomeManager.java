@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HomeManager {
     private final JavaPlugin plugin;
@@ -20,7 +21,7 @@ public class HomeManager {
     public HomeManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.homesFile = new File(plugin.getDataFolder(), "homes.yml");
-        this.homes = new HashMap<>();
+        this.homes = new ConcurrentHashMap<>();
         this.maxHomes = plugin.getConfig().getInt("commands.home.max-homes", 5);
         loadHomes();
     }
@@ -35,18 +36,22 @@ public class HomeManager {
         
         if (playersSection != null) {
             for (String uuidStr : playersSection.getKeys(false)) {
-                UUID uuid = UUID.fromString(uuidStr);
-                ConfigurationSection playerHomes = playersSection.getConfigurationSection(uuidStr);
-                
-                if (playerHomes != null) {
-                    Map<String, Location> playerHomesMap = new HashMap<>();
-                    for (String homeName : playerHomes.getKeys(false)) {
-                        Location loc = playerHomes.getLocation(homeName);
-                        if (loc != null) {
-                            playerHomesMap.put(homeName, loc);
+                try {
+                    UUID uuid = UUID.fromString(uuidStr);
+                    ConfigurationSection playerHomes = playersSection.getConfigurationSection(uuidStr);
+                    
+                    if (playerHomes != null) {
+                        Map<String, Location> playerHomesMap = new HashMap<>();
+                        for (String homeName : playerHomes.getKeys(false)) {
+                            Location loc = playerHomes.getLocation(homeName);
+                            if (loc != null) {
+                                playerHomesMap.put(homeName, loc);
+                            }
                         }
+                        homes.put(uuid, playerHomesMap);
                     }
-                    homes.put(uuid, playerHomesMap);
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Invalid UUID in homes.yml: " + uuidStr);
                 }
             }
         }
