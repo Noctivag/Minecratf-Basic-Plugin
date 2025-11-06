@@ -18,11 +18,12 @@ public class TeleportCommands implements CommandExecutor {
     private final Map<UUID, UUID> teleportRequests; // target -> requester
     private final Map<UUID, Long> requestExpiry;
     private final long requestTimeout; // Configurable timeout
+    private static final int SECONDS_TO_MILLIS = 1000;
 
     public TeleportCommands(JavaPlugin plugin) {
         this.teleportRequests = new ConcurrentHashMap<>();
         this.requestExpiry = new ConcurrentHashMap<>();
-        this.requestTimeout = plugin.getConfig().getLong("commands.teleport.request-timeout", 60) * 1000; // Convert to milliseconds
+        this.requestTimeout = plugin.getConfig().getLong("commands.teleport.request-timeout", 60) * SECONDS_TO_MILLIS;
     }
 
     @Override

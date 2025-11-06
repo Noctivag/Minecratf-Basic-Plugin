@@ -40,7 +40,7 @@ public class PrefixListener implements Listener {
         }
 
         // Combine rank prefix with custom prefix
-        String finalPrefix = rankPrefix.isEmpty() ? customPrefix : (rankPrefix + (customPrefix.isEmpty() ? "" : " " + customPrefix));
+        String finalPrefix = ColorUtils.combinePrefix(rankPrefix, customPrefix);
 
         event.renderer(ChatRenderer.viewerUnaware((source, sourceDisplayName, message) ->
             Component.empty()

@@ -51,7 +51,7 @@ public class TabListListener implements Listener {
             }
 
             // Combine rank prefix with custom prefix
-            String finalPrefix = rankPrefix.isEmpty() ? customPrefix : (rankPrefix + (customPrefix.isEmpty() ? "" : " " + customPrefix));
+            String finalPrefix = ColorUtils.combinePrefix(rankPrefix, customPrefix);
 
             // Erstelle den DisplayName nur einmal
             Component displayName = Component.empty()
@@ -105,7 +105,7 @@ public class TabListListener implements Listener {
             }
 
             // Combine rank prefix with custom prefix
-            String finalPrefix = rankPrefix.isEmpty() ? customPrefix : (rankPrefix + (customPrefix.isEmpty() ? "" : " " + customPrefix));
+            String finalPrefix = ColorUtils.combinePrefix(rankPrefix, customPrefix);
 
             Component displayName = Component.empty()
                     .append(ColorUtils.parseColor(finalPrefix))
