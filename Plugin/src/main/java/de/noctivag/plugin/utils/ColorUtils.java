@@ -159,4 +159,12 @@ public class ColorUtils {
             return 0xFFFFFF; // Fallback zu Weiß
         }
     }
+
+    /**
+     * Translates legacy Minecraft color codes (&a, &b, etc.) to actual colored text
+     */
+    public static String translateColorCodes(String text) {
+        if (text == null || text.isEmpty()) return "";
+        return text.replace("&", "§");
+    }
 }

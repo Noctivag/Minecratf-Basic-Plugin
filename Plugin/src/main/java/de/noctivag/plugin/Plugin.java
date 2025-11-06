@@ -8,11 +8,21 @@ import de.noctivag.plugin.messages.MessageManager;
 import de.noctivag.plugin.managers.ParticleManager;
 import de.noctivag.plugin.managers.EventManager;
 import de.noctivag.plugin.managers.SitManager;
+import de.noctivag.plugin.managers.HomeManager;
+import de.noctivag.plugin.managers.WarpManager;
+import de.noctivag.plugin.permissions.RankManager;
 import de.noctivag.plugin.utils.ScheduleManager;
 import de.noctivag.plugin.listeners.GUIListener;
 import de.noctivag.plugin.commands.MenuCommand;
 import de.noctivag.plugin.commands.TriggerSitCommand;
 import de.noctivag.plugin.commands.TriggerCamCommand;
+import de.noctivag.plugin.commands.ranks.RankCommand;
+import de.noctivag.plugin.commands.ranks.SetRankCommand;
+import de.noctivag.plugin.commands.teleport.HomeCommands;
+import de.noctivag.plugin.commands.teleport.WarpCommands;
+import de.noctivag.plugin.commands.teleport.SpawnCommand;
+import de.noctivag.plugin.commands.teleport.TeleportCommands;
+import de.noctivag.plugin.commands.admin.AdminCommands;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
@@ -30,6 +40,10 @@ public final class Plugin extends JavaPlugin {
     private ScheduleManager scheduleManager;
     private SitManager sitManager;
     private TriggerCamCommand triggerCamCommand;
+    private RankManager rankManager;
+    private HomeManager homeManager;
+    private WarpManager warpManager;
+    private SpawnCommand spawnCommand;
 
     @Override
     public void onEnable() {
@@ -43,6 +57,10 @@ public final class Plugin extends JavaPlugin {
             this.scheduleManager = new ScheduleManager(this);
             this.sitManager = new SitManager(this);
             this.triggerCamCommand = new TriggerCamCommand();
+            this.rankManager = new RankManager(this);
+            this.homeManager = new HomeManager(this);
+            this.warpManager = new WarpManager(this);
+            this.spawnCommand = new SpawnCommand(this);
 
             PluginAPI.init(this);
 
@@ -104,6 +122,15 @@ public final class Plugin extends JavaPlugin {
 
         // Trigger Commands (sit & cam)
         registerTriggerCommands();
+
+        // Rank Commands
+        registerRankCommands();
+
+        // Teleport Commands
+        registerTeleportCommands();
+
+        // Admin Commands
+        registerAdminCommands();
     }
 
     private void registerTriggerCommands() {
@@ -174,6 +201,70 @@ public final class Plugin extends JavaPlugin {
         }
     }
 
+    private void registerRankCommands() {
+        PluginCommand rankCmd = getCommand("rank");
+        if (rankCmd != null) {
+            rankCmd.setExecutor(new RankCommand(this));
+        }
+
+        PluginCommand setRankCmd = getCommand("setrank");
+        if (setRankCmd != null) {
+            setRankCmd.setExecutor(new SetRankCommand(this));
+        }
+    }
+
+    private void registerTeleportCommands() {
+        // Home commands
+        HomeCommands homeCommands = new HomeCommands(homeManager);
+        String[] homeCommandNames = {"sethome", "home", "delhome", "homes"};
+        for (String cmd : homeCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(homeCommands);
+            }
+        }
+
+        // Warp commands
+        WarpCommands warpCommands = new WarpCommands(warpManager);
+        String[] warpCommandNames = {"setwarp", "warp", "delwarp", "warps"};
+        for (String cmd : warpCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(warpCommands);
+            }
+        }
+
+        // Spawn commands
+        String[] spawnCommandNames = {"spawn", "setspawn"};
+        for (String cmd : spawnCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(spawnCommand);
+            }
+        }
+
+        // Teleport commands
+        TeleportCommands teleportCommands = new TeleportCommands();
+        String[] tpCommandNames = {"tp", "tpa", "tphere", "tpaccept", "tpdeny"};
+        for (String cmd : tpCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(teleportCommands);
+            }
+        }
+    }
+
+    private void registerAdminCommands() {
+        AdminCommands adminCommands = new AdminCommands();
+        String[] adminCommandNames = {"kick", "invsee", "day", "night", "sun", "rain"};
+        for (String cmd : adminCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(adminCommands);
+            }
+        }
+    }
+
     @Override
     public void onDisable() {
         // Save all data only if initialized
@@ -194,6 +285,16 @@ public final class Plugin extends JavaPlugin {
         }
         if (triggerCamCommand != null) {
             triggerCamCommand.restoreAllPlayers();
+        }
+        if (rankManager != null) {
+            rankManager.saveRanks();
+            rankManager.savePlayerRanks();
+        }
+        if (homeManager != null) {
+            homeManager.saveHomes();
+        }
+        if (warpManager != null) {
+            warpManager.saveWarps();
         }
 
         getLogger().info("Plugin deaktiviert - Alle Daten gespeichert (falls initialisiert).");
@@ -238,5 +339,21 @@ public final class Plugin extends JavaPlugin {
 
     public TriggerCamCommand getTriggerCamCommand() {
         return triggerCamCommand;
+    }
+
+    public RankManager getRankManager() {
+        return rankManager;
+    }
+
+    public HomeManager getHomeManager() {
+        return homeManager;
+    }
+
+    public WarpManager getWarpManager() {
+        return warpManager;
+    }
+
+    public SpawnCommand getSpawnCommand() {
+        return spawnCommand;
     }
 }
