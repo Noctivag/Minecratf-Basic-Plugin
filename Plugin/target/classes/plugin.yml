@@ -9,6 +9,12 @@ commands:
   unprefix:
     description: Entfernt deinen Chat-Prefix
     usage: /unprefix
+  suffix:
+    description: Setzt deinen Chat-Suffix
+    usage: /suffix <Text>
+  unsuffix:
+    description: Entfernt deinen Chat-Suffix
+    usage: /unsuffix
   nick:
     description: Ändert deinen Chat-Namen
     usage: /nick <Name>
@@ -72,10 +78,6 @@ commands:
       /joinmessage toggle <Spieler> - Schaltet Join-Nachricht um
       /joinmessage enable/disable <Spieler> - Aktiviert/Deaktiviert
     aliases: [jmsg, joinmsg]
-  menu:
-    description: Öffnet das Hauptmenü
-    usage: /menu
-    aliases: [servermenu, gui]
   sit:
     description: Setzt dich hin oder lässt dich aufstehen
     usage: /sit
@@ -84,8 +86,58 @@ commands:
     description: Aktiviert/Deaktiviert den Kamera-Modus (Spectator)
     usage: /cam
     aliases: [triggercam, camera]
+  vanish:
+    description: Macht dich unsichtbar für andere Spieler
+    usage: /vanish
+    aliases: [v]
+  invsee:
+    description: Zeigt das Inventar eines anderen Spielers
+    usage: /invsee <Spieler>
+    aliases: [openinv, oi]
 
 permissions:
+  plugin.*:
+    description: Gibt Zugriff auf alle Plugin-Funktionen
+    default: op
+    children:
+      plugin.prefix: true
+      plugin.suffix: true
+      plugin.nick: true
+      plugin.joinmessage: true
+      plugin.sit: true
+      plugin.cam: true
+      plugin.vanish: true
+      plugin.vanish.see: true
+      plugin.invsee: true
+      basiccommands.*: true
+      workbench.*: true
+  plugin.prefix:
+    description: Erlaubt die Nutzung von /prefix und /unprefix
+    default: true
+  plugin.suffix:
+    description: Erlaubt die Nutzung von /suffix und /unsuffix
+    default: true
+  plugin.nick:
+    description: Erlaubt die Nutzung von /nick und /unnick
+    default: true
+  plugin.sit:
+    description: Erlaubt die Nutzung des /sit Befehls
+    default: true
+  plugin.cam:
+    description: Erlaubt die Nutzung des /cam Befehls
+    default: true
+  plugin.vanish:
+    description: Erlaubt die Nutzung des /vanish Befehls
+    default: op
+  plugin.vanish.see:
+    description: Erlaubt das Sehen von unsichtbaren Spielern
+    default: op
+  plugin.invsee:
+    description: Erlaubt die Nutzung des /invsee Befehls
+    default: op
+  plugin.joinmessage:
+    description: Erlaubt das Verwalten von Join-Nachrichten
+    default: op
   basiccommands.*:
     description: Gibt Zugriff auf alle Basic-Commands
     default: op
@@ -158,16 +210,4 @@ permissions:
     default: true
   workbench.cartography:
     description: Erlaubt die Nutzung des Kartentischs
-    default: true
-  plugin.joinmessage:
-    description: Erlaubt das Verwalten von Join-Nachrichten
-    default: op
-  plugin.cosmetics:
-    description: Erlaubt die Nutzung von Partikeleffekten
-    default: true
-  plugin.sit:
-    description: Erlaubt die Nutzung des /sit Befehls
-    default: true
-  plugin.cam:
-    description: Erlaubt die Nutzung des /cam Befehls
     default: true

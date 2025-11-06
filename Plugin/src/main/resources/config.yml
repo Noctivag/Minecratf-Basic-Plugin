@@ -18,27 +18,20 @@ join-messages:
     - "&7[&a+&7] &e%player%"
     - "&8[&6★&8] &6%player%"
     - "&#FF0000[VIP] &e%player%"
+    - "<gradient:#FF0000:#00FF00>%player%</gradient>"
+    - "<rainbow>%player%</rainbow>"
 
-# Event-Einstellungen
-events:
-  dragon:
-    interval: 7200 # Alle 2 Stunden
-    duration: 900 # 15 Minuten
-    min-players: 3
-    rewards:
-      points: 500
-      items:
-        - DRAGON_EGG
-        - ELYTRA
-  wither:
-    interval: 3600 # Jede Stunde
-    duration: 600 # 10 Minuten
-    min-players: 2
-    rewards:
-      points: 300
-      items:
-        - NETHER_STAR
-        - BEACON
+# Quit-Message Einstellungen
+quit-messages:
+  default-message: "&7[&c-&7] &e%player% &7hat den Server verlassen"
+
+# Kamera-Modus Einstellungen
+camera:
+  max-distance: 300  # Maximale Entfernung vom Startpunkt in Blöcken
+
+# Sleep-System Einstellungen
+sleep:
+  percentage: 0.3  # Prozentsatz der Spieler die schlafen müssen (0.3 = 30%)
 
 # Command-Einstellungen
 commands:
@@ -53,21 +46,6 @@ commands:
       - Admin
       - Owner
       - Staff
-
-# Partikel-Effekte
-particles:
-  update-interval: 5 # Ticks
-  max-particles: 10
-  effects:
-    HEART:
-      permission: "cosmetics.hearts"
-      cost: 1000
-    FLAME:
-      permission: "cosmetics.flame"
-      cost: 1500
-    PORTAL:
-      permission: "cosmetics.portal"
-      cost: 2000
 
 # Nachrichten-Einstellungen
 messages:

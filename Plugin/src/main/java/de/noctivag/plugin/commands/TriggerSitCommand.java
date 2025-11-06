@@ -22,6 +22,11 @@ public class TriggerSitCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
+        if (!player.hasPermission("plugin.sit")) {
+            player.sendMessage("§cDu hast keine Berechtigung für diesen Befehl!");
+            return true;
+        }
+
         // Wenn der Spieler bereits sitzt, stehe auf
         if (sitManager.isSitting(player)) {
             if (sitManager.unsitPlayer(player)) {

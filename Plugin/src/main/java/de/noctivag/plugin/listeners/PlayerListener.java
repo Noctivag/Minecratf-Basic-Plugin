@@ -25,13 +25,20 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        String joinMessage = config.getMessage("join-message")
-            .replace("%player%", player.getName());
-        event.joinMessage(ColorUtils.parseColor(joinMessage));
+        
+        // Hole die Join-Message aus der Config
+        String joinMessage = config.getConfig().getString("join-messages.default-message", "&7[&a+&7] &e%player% &7hat den Server betreten");
+        joinMessage = joinMessage.replace("%player%", player.getName());
+        
+        // Konvertiere Minecraft-Farbcodes (&) zu Legacy-Format
+        joinMessage = joinMessage.replace('&', '§');
+        
+        // Setze die Join-Message als Legacy-Text-Component
+        event.joinMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(joinMessage));
 
-        // Setze gespeicherte Daten
-        if (plugin.getPrefixMap().containsKey(player.getName())) {
-            updatePlayerDisplay(player);
+        // Lade und setze gespeicherte Prefix/Suffix/Nick Daten
+        if (plugin.getPlayerDataManager() != null && plugin.getNametagManager() != null) {
+            plugin.getNametagManager().loadNametag(player);
         }
 
         // Debug-Modus Info
@@ -43,13 +50,17 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        String quitMessage = config.getMessage("quit-message")
-            .replace("%player%", player.getName());
-        event.quitMessage(ColorUtils.parseColor(quitMessage));
-
-        // Speichere Daten beim Verlassen
-        plugin.getParticleManager().stopEffect(player);
         
+        // Hole die Quit-Message aus der Config (falls vorhanden)
+        String quitMessage = config.getConfig().getString("quit-messages.default-message", "&7[&c-&7] &e%player% &7hat den Server verlassen");
+        quitMessage = quitMessage.replace("%player%", player.getName());
+        
+        // Konvertiere Minecraft-Farbcodes (&) zu Legacy-Format
+        quitMessage = quitMessage.replace('&', '§');
+        
+        // Setze die Quit-Message als Legacy-Text-Component
+        event.quitMessage(net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection().deserialize(quitMessage));
+
         // Entferne Sitz-ArmorStand wenn vorhanden
         if (plugin.getSitManager() != null) {
             plugin.getSitManager().removePlayerSeat(player.getUniqueId());
@@ -58,6 +69,11 @@ public class PlayerListener implements Listener {
         // Entferne Kamera-Modus wenn aktiv
         if (plugin.getTriggerCamCommand() != null) {
             plugin.getTriggerCamCommand().removePlayer(player.getUniqueId());
+        }
+        
+        // Cleanup Nametag
+        if (plugin.getNametagManager() != null) {
+            plugin.getNametagManager().cleanup(player);
         }
     }
 
@@ -97,16 +113,5 @@ public class PlayerListener implements Listener {
                 ));
             }
         }
-    }
-
-    private void updatePlayerDisplay(Player player) {
-        String prefix = plugin.getPrefixMap().getOrDefault(player.getName(), "");
-        String nick = plugin.getNickMap().getOrDefault(player.getName(), player.getName());
-        Component displayName = Component.empty()
-            .append(ColorUtils.parseColor(prefix))
-            .append(Component.space())
-            .append(ColorUtils.parseColor(nick));
-        player.displayName(displayName);
-        player.playerListName(displayName);
     }
 }

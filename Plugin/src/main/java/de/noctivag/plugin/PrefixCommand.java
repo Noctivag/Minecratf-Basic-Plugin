@@ -1,5 +1,7 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.data.PlayerDataManager;
+import de.noctivag.plugin.managers.NametagManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,28 +11,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-
 public class PrefixCommand implements CommandExecutor {
-    private final HashMap<String, String> prefixMap;
-    private final HashMap<String, String> nickMap;
+    private final PlayerDataManager playerDataManager;
+    private final NametagManager nametagManager;
 
-    public PrefixCommand(HashMap<String, String> prefixMap, HashMap<String, String> nickMap) {
-        this.prefixMap = prefixMap;
-        this.nickMap = nickMap;
-    }
-
-    private void updateDisplayName(@NotNull Player player) {
-        String prefix = prefixMap.getOrDefault(player.getName(), "");
-        String nick = nickMap.getOrDefault(player.getName(), player.getName());
-
-        Component displayName = Component.empty()
-            .append(ColorUtils.parseColor(prefix))
-            .append(Component.space())
-            .append(ColorUtils.parseColor(nick));
-
-        player.displayName(displayName);
-        player.playerListName(displayName);
+    public PrefixCommand(PlayerDataManager playerDataManager, NametagManager nametagManager) {
+        this.playerDataManager = playerDataManager;
+        this.nametagManager = nametagManager;
     }
 
     @Override
@@ -40,21 +27,32 @@ public class PrefixCommand implements CommandExecutor {
             return true;
         }
 
+        if (!player.hasPermission("plugin.prefix")) {
+            player.sendMessage(Component.text("Du hast keine Berechtigung für diesen Befehl!").color(NamedTextColor.RED));
+            return true;
+        }
+
         if (args.length == 0) {
             player.sendMessage(Component.text("=== Prefix-Hilfe ===").color(NamedTextColor.GOLD));
+            player.sendMessage(Component.text("Unterstützte Formate:").color(NamedTextColor.YELLOW));
+            player.sendMessage(Component.text("• Legacy: ").color(NamedTextColor.GRAY)
+                .append(Component.text("&c[Admin] ").color(NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("• Hex: ").color(NamedTextColor.GRAY)
+                .append(Component.text("#FF0000[VIP] oder &#FF0000[VIP]").color(NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("• Gradient: ").color(NamedTextColor.GRAY)
+                .append(Component.text("<gradient:#FF0000:#0000FF>[Admin]</gradient>").color(NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("• Rainbow: ").color(NamedTextColor.GRAY)
+                .append(Component.text("<rainbow>[VIP]</rainbow>").color(NamedTextColor.WHITE)));
             player.sendMessage(Component.text("Beispiele:").color(NamedTextColor.YELLOW));
-            player.sendMessage(Component.text("/prefix #FF0000[Admin] ").color(NamedTextColor.WHITE)
-                .append(Component.text("- Einfarbig").color(NamedTextColor.GRAY)));
-            player.sendMessage(Component.text("/prefix gradient:#FF0000:#00FF00:[Admin] ").color(NamedTextColor.WHITE)
-                .append(Component.text("- Farbverlauf").color(NamedTextColor.GRAY)));
-            player.sendMessage(Component.text("/prefix multi:#FF0000:#00FF00:#0000FF:[Admin] ").color(NamedTextColor.WHITE)
-                .append(Component.text("- Mehrere Farben").color(NamedTextColor.GRAY)));
+            player.sendMessage(Component.text("/prefix &c[Admin] ").color(NamedTextColor.WHITE));
+            player.sendMessage(Component.text("/prefix <gradient:#FF0000:#00FF00>[VIP]</gradient>").color(NamedTextColor.WHITE));
+            player.sendMessage(Component.text("/prefix <rainbow>[★]</rainbow>").color(NamedTextColor.WHITE));
             return true;
         }
 
         String prefix = String.join(" ", args);
-        prefixMap.put(player.getName(), prefix);
-        updateDisplayName(player);
+        playerDataManager.setPrefix(player.getName(), prefix);
+        nametagManager.updateNametag(player);
 
         player.sendMessage(Component.text("Dein Prefix wurde gesetzt zu: ").color(NamedTextColor.GREEN)
             .append(ColorUtils.parseColor(prefix)));

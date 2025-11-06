@@ -1,5 +1,7 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.data.PlayerDataManager;
+import de.noctivag.plugin.managers.NametagManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -7,24 +9,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import java.util.HashMap;
 
 public class UnPrefixCommand implements CommandExecutor {
-    private final HashMap<String, String> prefixMap;
-    private final HashMap<String, String> nickMap;
+    private final PlayerDataManager playerDataManager;
+    private final NametagManager nametagManager;
 
-    public UnPrefixCommand(HashMap<String, String> prefixMap, HashMap<String, String> nickMap) {
-        this.prefixMap = prefixMap;
-        this.nickMap = nickMap;
-    }
-
-    private void updateDisplayName(@NotNull Player player) {
-        String nick = nickMap.getOrDefault(player.getName(), player.getName());
-        Component displayName = Component.empty()
-                .append(Component.text(nick));
-
-        player.displayName(displayName);
-        player.playerListName(displayName);
+    public UnPrefixCommand(PlayerDataManager playerDataManager, NametagManager nametagManager) {
+        this.playerDataManager = playerDataManager;
+        this.nametagManager = nametagManager;
     }
 
     @Override
@@ -34,8 +26,13 @@ public class UnPrefixCommand implements CommandExecutor {
             return true;
         }
 
-        prefixMap.remove(player.getName());
-        updateDisplayName(player);
+        if (!player.hasPermission("plugin.prefix")) {
+            player.sendMessage(Component.text("Du hast keine Berechtigung für diesen Befehl!").color(NamedTextColor.RED));
+            return true;
+        }
+
+        playerDataManager.removePrefix(player.getName());
+        nametagManager.updateNametag(player);
         player.sendMessage(Component.text("Dein Prefix wurde entfernt.").color(NamedTextColor.GREEN));
         return true;
     }

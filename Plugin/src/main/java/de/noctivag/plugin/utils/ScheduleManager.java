@@ -20,6 +20,22 @@ public class ScheduleManager {
     public ScheduleManager(JavaPlugin plugin) {
         this.plugin = plugin;
         startGlobalTimer();
+        startAutoSaveTask();
+    }
+    
+    /**
+     * Startet den Auto-Save Task für Spielerdaten
+     */
+    private void startAutoSaveTask() {
+        // Auto-Save alle 5 Minuten (6000 Ticks)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            if (plugin instanceof de.noctivag.plugin.Plugin mainPlugin) {
+                if (mainPlugin.getPlayerDataManager() != null) {
+                    mainPlugin.getPlayerDataManager().savePlayerData();
+                    plugin.getLogger().info("Auto-Save: Spielerdaten gespeichert");
+                }
+            }
+        }, 6000L, 6000L); // Erste Ausführung nach 5min, dann alle 5min
     }
 
     private void startGlobalTimer() {

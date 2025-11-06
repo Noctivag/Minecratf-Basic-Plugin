@@ -1,5 +1,7 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.data.PlayerDataManager;
+import de.noctivag.plugin.managers.NametagManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -9,28 +11,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-
 public class NickCommand implements CommandExecutor {
-    private final HashMap<String, String> nickMap;
-    private final HashMap<String, String> prefixMap;
+    private final PlayerDataManager playerDataManager;
+    private final NametagManager nametagManager;
 
-    public NickCommand(HashMap<String, String> nickMap, HashMap<String, String> prefixMap) {
-        this.nickMap = nickMap;
-        this.prefixMap = prefixMap;
-    }
-
-    private void updateDisplayName(@NotNull Player player) {
-        String prefix = prefixMap.getOrDefault(player.getName(), "");
-        String nick = nickMap.getOrDefault(player.getName(), player.getName());
-
-        Component displayName = Component.empty()
-            .append(ColorUtils.parseColor(prefix))
-            .append(Component.space())
-            .append(ColorUtils.parseColor(nick));
-
-        player.displayName(displayName);
-        player.playerListName(displayName);
+    public NickCommand(PlayerDataManager playerDataManager, NametagManager nametagManager) {
+        this.playerDataManager = playerDataManager;
+        this.nametagManager = nametagManager;
     }
 
     @Override
@@ -40,21 +27,32 @@ public class NickCommand implements CommandExecutor {
             return true;
         }
 
+        if (!player.hasPermission("plugin.nick")) {
+            player.sendMessage(Component.text("Du hast keine Berechtigung für diesen Befehl!").color(NamedTextColor.RED));
+            return true;
+        }
+
         if (args.length == 0) {
             player.sendMessage(Component.text("=== Nickname-Hilfe ===").color(NamedTextColor.GOLD));
+            player.sendMessage(Component.text("Unterstützte Formate:").color(NamedTextColor.YELLOW));
+            player.sendMessage(Component.text("• Legacy: ").color(NamedTextColor.GRAY)
+                .append(Component.text("&cSpieler").color(NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("• Hex: ").color(NamedTextColor.GRAY)
+                .append(Component.text("#FF0000Spieler oder &#FF0000Spieler").color(NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("• Gradient: ").color(NamedTextColor.GRAY)
+                .append(Component.text("<gradient:#FF0000:#0000FF>Spieler</gradient>").color(NamedTextColor.WHITE)));
+            player.sendMessage(Component.text("• Rainbow: ").color(NamedTextColor.GRAY)
+                .append(Component.text("<rainbow>Spieler</rainbow>").color(NamedTextColor.WHITE)));
             player.sendMessage(Component.text("Beispiele:").color(NamedTextColor.YELLOW));
-            player.sendMessage(Component.text("/nick #FF0000Spieler ").color(NamedTextColor.WHITE)
-                .append(Component.text("- Einfarbig").color(NamedTextColor.GRAY)));
-            player.sendMessage(Component.text("/nick gradient:#FF0000:#00FF00:Spieler ").color(NamedTextColor.WHITE)
-                .append(Component.text("- Farbverlauf").color(NamedTextColor.GRAY)));
-            player.sendMessage(Component.text("/nick multi:#FF0000:#00FF00:#0000FF:Spieler ").color(NamedTextColor.WHITE)
-                .append(Component.text("- Mehrere Farben").color(NamedTextColor.GRAY)));
+            player.sendMessage(Component.text("/nick &bMeinName").color(NamedTextColor.WHITE));
+            player.sendMessage(Component.text("/nick <gradient:#FF0000:#00FF00>MeinName</gradient>").color(NamedTextColor.WHITE));
+            player.sendMessage(Component.text("/nick <rainbow>MeinName</rainbow>").color(NamedTextColor.WHITE));
             return true;
         }
 
         String nick = String.join(" ", args);
-        nickMap.put(player.getName(), nick);
-        updateDisplayName(player);
+        playerDataManager.setNickname(player.getName(), nick);
+        nametagManager.updateNametag(player);
 
         player.sendMessage(Component.text("Dein Nickname wurde gesetzt zu: ").color(NamedTextColor.GREEN)
             .append(ColorUtils.parseColor(nick)));

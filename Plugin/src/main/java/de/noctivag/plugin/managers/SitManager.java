@@ -2,6 +2,7 @@ package de.noctivag.plugin.managers;
 
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -28,11 +29,12 @@ public class SitManager {
             return false;
         }
 
-        Location loc = player.getLocation();
-        // Setze die Y-Koordinate etwas niedriger für eine bessere Sitzposition
-        loc.subtract(0, 0.5, 0);
-
-        ArmorStand armorStand = player.getWorld().spawn(loc, ArmorStand.class);
+        Location loc = player.getLocation().clone();
+        
+        // Positioniere ArmorStand 0.4 Blöcke höher (tiefer sitzen)
+        loc.add(0, 0.4, 0);
+        
+        ArmorStand armorStand = (ArmorStand) player.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
         armorStand.setVisible(false);
         armorStand.setGravity(false);
         armorStand.setInvulnerable(true);
@@ -54,7 +56,17 @@ public class SitManager {
     public boolean unsitPlayer(Player player) {
         ArmorStand armorStand = sittingPlayers.remove(player.getUniqueId());
         if (armorStand != null) {
+            // Speichere Position vor dem Entfernen
+            Location standLocation = armorStand.getLocation().clone();
+            // Setze Y-Position auf sicheren Boden (leicht über dem ArmorStand)
+            standLocation.setY(standLocation.getY() + 0.1);
+            
+            // Entferne ArmorStand
             armorStand.remove();
+            
+            // Teleportiere Spieler auf sichere Position
+            player.teleport(standLocation);
+            
             return true;
         }
         return false;

@@ -1,5 +1,7 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.data.PlayerDataManager;
+import de.noctivag.plugin.managers.NametagManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -8,26 +10,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import java.util.HashMap;
 
 public class UnNickCommand implements CommandExecutor {
-    private final HashMap<String, String> prefixMap;
-    private final HashMap<String, String> nickMap;
+    private final PlayerDataManager playerDataManager;
+    private final NametagManager nametagManager;
 
-    public UnNickCommand(HashMap<String, String> prefixMap, HashMap<String, String> nickMap) {
-        this.prefixMap = prefixMap;
-        this.nickMap = nickMap;
-    }
-
-    private void updateDisplayName(@NotNull Player player) {
-        String prefix = prefixMap.getOrDefault(player.getName(), "");
-        Component displayName = Component.empty()
-                .append(ColorUtils.parseColor(prefix))
-                .append(Component.space())
-                .append(Component.text(player.getName()));
-
-        player.displayName(displayName);
-        player.playerListName(displayName);
+    public UnNickCommand(PlayerDataManager playerDataManager, NametagManager nametagManager) {
+        this.playerDataManager = playerDataManager;
+        this.nametagManager = nametagManager;
     }
 
     @Override
@@ -37,8 +27,13 @@ public class UnNickCommand implements CommandExecutor {
             return true;
         }
 
-        nickMap.remove(player.getName());
-        updateDisplayName(player);
+        if (!player.hasPermission("plugin.nick")) {
+            player.sendMessage(Component.text("Du hast keine Berechtigung für diesen Befehl!").color(NamedTextColor.RED));
+            return true;
+        }
+
+        playerDataManager.removeNickname(player.getName());
+        nametagManager.updateNametag(player);
         player.sendMessage(Component.text("Dein Nickname wurde entfernt.").color(NamedTextColor.GREEN));
         return true;
     }
