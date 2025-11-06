@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import net.kyori.adventure.text.Component;
 
 public class PlayerListener implements Listener {
@@ -48,6 +49,27 @@ public class PlayerListener implements Listener {
 
         // Speichere Daten beim Verlassen
         plugin.getParticleManager().stopEffect(player);
+        
+        // Entferne Sitz-ArmorStand wenn vorhanden
+        if (plugin.getSitManager() != null) {
+            plugin.getSitManager().removePlayerSeat(player.getUniqueId());
+        }
+        
+        // Entferne Kamera-Modus wenn aktiv
+        if (plugin.getTriggerCamCommand() != null) {
+            plugin.getTriggerCamCommand().removePlayer(player.getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onEntityDismount(EntityDismountEvent event) {
+        // Wenn ein Spieler von einem ArmorStand absteigt, entferne den ArmorStand
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            if (plugin.getSitManager() != null && plugin.getSitManager().isSitting(player)) {
+                plugin.getSitManager().unsitPlayer(player);
+            }
+        }
     }
 
     @EventHandler

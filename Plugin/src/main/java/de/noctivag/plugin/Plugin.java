@@ -7,9 +7,12 @@ import de.noctivag.plugin.data.DataManager;
 import de.noctivag.plugin.messages.MessageManager;
 import de.noctivag.plugin.managers.ParticleManager;
 import de.noctivag.plugin.managers.EventManager;
+import de.noctivag.plugin.managers.SitManager;
 import de.noctivag.plugin.utils.ScheduleManager;
 import de.noctivag.plugin.listeners.GUIListener;
 import de.noctivag.plugin.commands.MenuCommand;
+import de.noctivag.plugin.commands.TriggerSitCommand;
+import de.noctivag.plugin.commands.TriggerCamCommand;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
@@ -25,6 +28,8 @@ public final class Plugin extends JavaPlugin {
     private ParticleManager particleManager;
     private EventManager eventManager;
     private ScheduleManager scheduleManager;
+    private SitManager sitManager;
+    private TriggerCamCommand triggerCamCommand;
 
     @Override
     public void onEnable() {
@@ -36,6 +41,8 @@ public final class Plugin extends JavaPlugin {
             this.particleManager = new ParticleManager(this);
             this.eventManager = new EventManager(this);
             this.scheduleManager = new ScheduleManager(this);
+            this.sitManager = new SitManager(this);
+            this.triggerCamCommand = new TriggerCamCommand();
 
             PluginAPI.init(this);
 
@@ -68,7 +75,7 @@ public final class Plugin extends JavaPlugin {
             "prefix", "nick", "menu", "heal", "feed", "fly",
             "gmc", "gms", "gmsp", "craftingtable", "anvil",
             "enderchest", "grindstone", "smithingtable",
-            "stonecutter", "loom", "cartography"
+            "stonecutter", "loom", "cartography", "sit", "cam"
         };
 
         for (String cmd : commands) {
@@ -93,6 +100,21 @@ public final class Plugin extends JavaPlugin {
         PluginCommand menuCmd = getCommand("menu");
         if (menuCmd != null) {
             menuCmd.setExecutor(new MenuCommand());
+        }
+
+        // Trigger Commands (sit & cam)
+        registerTriggerCommands();
+    }
+
+    private void registerTriggerCommands() {
+        PluginCommand sitCmd = getCommand("sit");
+        if (sitCmd != null) {
+            sitCmd.setExecutor(new TriggerSitCommand(sitManager));
+        }
+
+        PluginCommand camCmd = getCommand("cam");
+        if (camCmd != null) {
+            camCmd.setExecutor(triggerCamCommand);
         }
     }
 
@@ -167,6 +189,12 @@ public final class Plugin extends JavaPlugin {
         if (particleManager != null) {
             particleManager.stopAllEffects();
         }
+        if (sitManager != null) {
+            sitManager.removeAllSeats();
+        }
+        if (triggerCamCommand != null) {
+            triggerCamCommand.restoreAllPlayers();
+        }
 
         getLogger().info("Plugin deaktiviert - Alle Daten gespeichert (falls initialisiert).");
     }
@@ -202,5 +230,13 @@ public final class Plugin extends JavaPlugin {
 
     public ScheduleManager getScheduleManager() {
         return scheduleManager;
+    }
+
+    public SitManager getSitManager() {
+        return sitManager;
+    }
+
+    public TriggerCamCommand getTriggerCamCommand() {
+        return triggerCamCommand;
     }
 }

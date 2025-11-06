@@ -76,6 +76,14 @@ commands:
     description: Öffnet das Hauptmenü
     usage: /menu
     aliases: [servermenu, gui]
+  sit:
+    description: Setzt dich hin oder lässt dich aufstehen
+    usage: /sit
+    aliases: [triggersit]
+  cam:
+    description: Aktiviert/Deaktiviert den Kamera-Modus (Spectator)
+    usage: /cam
+    aliases: [triggercam, camera]
 
 permissions:
   basiccommands.*:
@@ -156,4 +164,10 @@ permissions:
     default: op
   plugin.cosmetics:
     description: Erlaubt die Nutzung von Partikeleffekten
+    default: true
+  plugin.sit:
+    description: Erlaubt die Nutzung des /sit Befehls
+    default: true
+  plugin.cam:
+    description: Erlaubt die Nutzung des /cam Befehls
     default: true
