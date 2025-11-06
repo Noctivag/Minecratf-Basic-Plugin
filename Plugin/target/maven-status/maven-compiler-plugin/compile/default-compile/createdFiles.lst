@@ -27,6 +27,7 @@ de/noctivag/plugin/WorkbenchCommand.class
 de/noctivag/plugin/commands/TriggerCamCommand.class
 de/noctivag/plugin/tabcomplete/JoinMessageTabCompleter.class
 de/noctivag/plugin/JoinMessageCommand.class
+de/noctivag/plugin/listeners/CameraListener.class
 de/noctivag/plugin/data/PlayerDataManager.class
 de/noctivag/plugin/UnPrefixCommand.class
 de/noctivag/plugin/managers/SleepManager.class

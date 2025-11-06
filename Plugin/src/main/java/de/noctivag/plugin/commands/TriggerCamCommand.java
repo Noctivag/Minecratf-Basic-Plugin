@@ -111,7 +111,7 @@ public class TriggerCamCommand implements CommandExecutor {
             ArmorStand dummy = player.getWorld().spawn(currentLocation, ArmorStand.class);
             dummy.setVisible(true);
             dummy.setGravity(false);
-            dummy.setInvulnerable(true);
+            dummy.setInvulnerable(false); // GEÄNDERT: Damit Damage-Events getriggert werden
             dummy.setBasePlate(false);
             dummy.setArms(true);
             dummy.setSmall(false);

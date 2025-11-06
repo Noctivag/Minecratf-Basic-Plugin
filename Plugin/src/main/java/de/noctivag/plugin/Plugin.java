@@ -98,6 +98,7 @@ public final class Plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new TabListListener(this, prefixMap, nickMap, joinMessageManager), this);
         getServer().getPluginManager().registerEvents(new PrefixListener(this, prefixMap, nickMap), this);
+        getServer().getPluginManager().registerEvents(new de.noctivag.plugin.listeners.CameraListener(this, triggerCamCommand), this);
     }
 
     private void registerTabCompleters() {

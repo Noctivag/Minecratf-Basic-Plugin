@@ -78,10 +78,6 @@ commands:
       /joinmessage toggle <Spieler> - Schaltet Join-Nachricht um
       /joinmessage enable/disable <Spieler> - Aktiviert/Deaktiviert
     aliases: [jmsg, joinmsg]
-  menu:
-    description: Öffnet das Hauptmenü
-    usage: /menu
-    aliases: [servermenu, gui]
   sit:
     description: Setzt dich hin oder lässt dich aufstehen
     usage: /sit
@@ -252,6 +248,21 @@ permissions:
       plugin.vanish.see: true
       plugin.invsee: true
       basiccommands.*: true
+  plugin.prefix:
+    description: Erlaubt das Setzen eines Prefixes
+    default: true
+  plugin.suffix:
+    description: Erlaubt das Setzen eines Suffixes
+    default: true
+  plugin.nick:
+    description: Erlaubt das Setzen eines Nicknames
+    default: true
+  plugin.sit:
+    description: Erlaubt das Sitzen
+    default: true
+  plugin.cam:
+    description: Erlaubt den Kamera-Modus
+    default: true
       workbench.*: true
   plugin.prefix:
     description: Erlaubt die Nutzung von /prefix und /unprefix

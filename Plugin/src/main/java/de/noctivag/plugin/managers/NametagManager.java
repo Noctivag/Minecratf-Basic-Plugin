@@ -60,6 +60,9 @@ public class NametagManager {
         
         // Aktualisiere Display-Name und PlayerList-Name
         updateDisplayName(player);
+        
+        // Aktualisiere Scoreboard für ALLE Online-Spieler
+        updateScoreboardForAll(player);
     }
 
     /**
@@ -130,6 +133,17 @@ public class NametagManager {
      */
     public void loadNametag(Player player) {
         updateNametag(player);
+    }
+
+    /**
+     * Aktualisiert das Scoreboard für alle Spieler
+     * Damit die Änderungen sofort für alle sichtbar sind
+     */
+    private void updateScoreboardForAll(Player changedPlayer) {
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            // Setze das Main-Scoreboard für jeden Spieler neu
+            onlinePlayer.setScoreboard(scoreboard);
+        }
     }
 
     /**

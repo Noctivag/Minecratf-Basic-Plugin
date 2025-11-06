@@ -29,6 +29,7 @@
 /workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/database/DatabaseProvider.java
 /workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/database/MySQLProvider.java
 /workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/database/SQLiteProvider.java
+/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/listeners/CameraListener.java
 /workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/listeners/PlayerListener.java
 /workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/HomeManager.java
 /workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/NametagManager.java
