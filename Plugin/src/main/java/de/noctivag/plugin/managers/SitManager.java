@@ -30,7 +30,7 @@ public class SitManager {
         }
 
     Location playerLocation = player.getLocation();
-    Location seatLocation = playerLocation.clone().subtract(0.0, 1.25, 0.0);
+    Location seatLocation = playerLocation.clone().add(0.0, 1.25, 0.0);
 
     ArmorStand armorStand = (ArmorStand) player.getWorld().spawnEntity(seatLocation, EntityType.ARMOR_STAND);
     armorStand.setVisible(false);
@@ -56,7 +56,7 @@ public class SitManager {
         ArmorStand armorStand = sittingPlayers.remove(player.getUniqueId());
         if (armorStand != null) {
             // Speichere Position vor dem Entfernen
-            Location dismountLocation = armorStand.getLocation().clone().add(0.0, 1.35, 0.0);
+            Location dismountLocation = armorStand.getLocation().clone().add(0.0, 0.1, 0.0);
             dismountLocation.setPitch(player.getLocation().getPitch());
             dismountLocation.setYaw(player.getLocation().getYaw());
             
