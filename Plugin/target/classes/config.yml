@@ -7,6 +7,20 @@ settings:
   debug-mode: false
   check-player-exists: true # Prüft ob Spieler existiert bei /joinmessage set
 
+# Database Settings for BungeeCord Network Mode
+# The plugin will automatically detect if it's running on a BungeeCord network
+# If BungeeCord is detected, it will use MySQL; otherwise, it will use SQLite
+database:
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft_ranks
+    username: root
+    password: password
+    # Connection pool settings
+    max-pool-size: 10
+    min-idle: 2
+
 # Join-Message Einstellungen
 join-messages:
   default-message: "&7[&a+&7] &e%player% &7hat den Server betreten"
@@ -29,6 +43,10 @@ quit-messages:
 camera:
   max-distance: 300  # Maximale Entfernung vom Startpunkt in Blöcken
 
+# Sleep-System Einstellungen
+sleep:
+  percentage: 0.3  # Prozentsatz der Spieler die schlafen müssen (0.3 = 30%)
+
 # Command-Einstellungen
 commands:
   heal:
@@ -42,6 +60,10 @@ commands:
       - Admin
       - Owner
       - Staff
+  home:
+    max-homes: 5 # Maximum number of homes per player
+  teleport:
+    request-timeout: 60 # Teleport request timeout in seconds
 
 # Nachrichten-Einstellungen
 messages:

@@ -2,6 +2,7 @@ package de.noctivag.plugin.managers;
 
 import de.noctivag.plugin.Plugin;
 import de.noctivag.plugin.messages.MessageManager;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -72,13 +73,16 @@ public class SleepManager implements Listener {
             skipNight(world);
         } else {
             // Informiere die Spieler
-            String message = messageManager.getMessage("sleep.player-sleeping")
+            String messageText = LegacyComponentSerializer.legacySection().serialize(
+                messageManager.getMessage("sleep.player-sleeping")
+            );
+            String formattedMessage = messageText
                     .replace("%player%", player.getName())
                     .replace("%sleeping%", String.valueOf(sleepingCount))
                     .replace("%required%", String.valueOf(requiredSleepers))
                     .replace("%total%", String.valueOf(playersInWorld));
             
-            broadcastToWorld(world, message);
+            broadcastToWorld(world, formattedMessage);
         }
     }
 
@@ -108,8 +112,10 @@ public class SleepManager implements Listener {
         world.setStorm(false);
         world.setThundering(false);
 
-        String message = messageManager.getMessage("sleep.night-skipped");
-        broadcastToWorld(world, message);
+        String messageText = LegacyComponentSerializer.legacySection().serialize(
+            messageManager.getMessage("sleep.night-skipped")
+        );
+        broadcastToWorld(world, messageText);
 
         // Räume die schlafenden Spieler auf
         sleepingPlayers.clear();

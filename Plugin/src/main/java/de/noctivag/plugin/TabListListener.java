@@ -1,5 +1,7 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.permissions.Rank;
+import de.noctivag.plugin.permissions.RankManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
@@ -18,6 +20,7 @@ public class TabListListener implements Listener {
     private final Map<String, String> nickMap;
     private final JoinMessageManager joinMessageManager;
     private final Plugin plugin;
+    private final RankManager rankManager;
 
     public TabListListener(@NotNull Plugin plugin, @NotNull Map<String, String> prefixMap,
                            @NotNull Map<String, String> nickMap, @NotNull JoinMessageManager joinMessageManager) {
@@ -25,6 +28,7 @@ public class TabListListener implements Listener {
         this.prefixMap = new ConcurrentHashMap<>(prefixMap);
         this.nickMap = new ConcurrentHashMap<>(nickMap);
         this.joinMessageManager = Objects.requireNonNull(joinMessageManager, "JoinMessageManager cannot be null");
+        this.rankManager = plugin.getRankManager();
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -34,12 +38,24 @@ public class TabListListener implements Listener {
             if (player == null) return;
 
             String playerName = player.getName();
-            String prefix = prefixMap.getOrDefault(playerName, "");
+            String customPrefix = prefixMap.getOrDefault(playerName, "");
             String nick = nickMap.getOrDefault(playerName, playerName);
+
+            // Get rank prefix if available
+            String rankPrefix = "";
+            if (rankManager != null) {
+                Rank rank = rankManager.getHighestRank(player.getUniqueId());
+                if (rank != null) {
+                    rankPrefix = rank.getPrefix();
+                }
+            }
+
+            // Combine rank prefix with custom prefix
+            String finalPrefix = ColorUtils.combinePrefix(rankPrefix, customPrefix);
 
             // Erstelle den DisplayName nur einmal
             Component displayName = Component.empty()
-                    .append(ColorUtils.parseColor(prefix))
+                    .append(ColorUtils.parseColor(finalPrefix))
                     .append(Component.space())
                     .append(ColorUtils.parseColor(nick));
 
@@ -76,11 +92,23 @@ public class TabListListener implements Listener {
     public void updatePlayerDisplay(@NotNull Player player) {
         try {
             String playerName = player.getName();
-            String prefix = prefixMap.getOrDefault(playerName, "");
+            String customPrefix = prefixMap.getOrDefault(playerName, "");
             String nick = nickMap.getOrDefault(playerName, playerName);
 
+            // Get rank prefix if available
+            String rankPrefix = "";
+            if (rankManager != null) {
+                Rank rank = rankManager.getHighestRank(player.getUniqueId());
+                if (rank != null) {
+                    rankPrefix = rank.getPrefix();
+                }
+            }
+
+            // Combine rank prefix with custom prefix
+            String finalPrefix = ColorUtils.combinePrefix(rankPrefix, customPrefix);
+
             Component displayName = Component.empty()
-                    .append(ColorUtils.parseColor(prefix))
+                    .append(ColorUtils.parseColor(finalPrefix))
                     .append(Component.space())
                     .append(ColorUtils.parseColor(nick));
 

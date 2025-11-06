@@ -8,13 +8,22 @@ import de.noctivag.plugin.data.DataManager;
 import de.noctivag.plugin.messages.MessageManager;
 import de.noctivag.plugin.managers.SitManager;
 import de.noctivag.plugin.managers.TabListManager;
-import de.noctivag.plugin.managers.SleepManager;
 import de.noctivag.plugin.managers.NametagManager;
+import de.noctivag.plugin.managers.HomeManager;
+import de.noctivag.plugin.managers.WarpManager;
+import de.noctivag.plugin.permissions.RankManager;
 import de.noctivag.plugin.utils.ScheduleManager;
 import de.noctivag.plugin.commands.TriggerSitCommand;
 import de.noctivag.plugin.commands.TriggerCamCommand;
 import de.noctivag.plugin.commands.VanishCommand;
 import de.noctivag.plugin.commands.InvseeCommand;
+import de.noctivag.plugin.commands.ranks.RankCommand;
+import de.noctivag.plugin.commands.ranks.SetRankCommand;
+import de.noctivag.plugin.commands.teleport.HomeCommands;
+import de.noctivag.plugin.commands.teleport.WarpCommands;
+import de.noctivag.plugin.commands.teleport.SpawnCommand;
+import de.noctivag.plugin.commands.teleport.TeleportCommands;
+import de.noctivag.plugin.commands.admin.AdminCommands;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
@@ -31,11 +40,14 @@ public final class Plugin extends JavaPlugin {
     private ScheduleManager scheduleManager;
     private SitManager sitManager;
     private TabListManager tabListManager;
-    private SleepManager sleepManager;
     private NametagManager nametagManager;
     private TriggerCamCommand triggerCamCommand;
     private VanishCommand vanishCommand;
     private InvseeCommand invseeCommand;
+    private RankManager rankManager;
+    private HomeManager homeManager;
+    private WarpManager warpManager;
+    private SpawnCommand spawnCommand;
 
     @Override
     public void onEnable() {
@@ -48,12 +60,15 @@ public final class Plugin extends JavaPlugin {
             this.scheduleManager = new ScheduleManager(this);
             this.sitManager = new SitManager(this);
             this.tabListManager = new TabListManager(this);
-            this.sleepManager = new SleepManager(this);
             this.nametagManager = new NametagManager(this);
             this.triggerCamCommand = new TriggerCamCommand();
             this.triggerCamCommand.setPlugin(this);
             this.vanishCommand = new VanishCommand();
             this.invseeCommand = new InvseeCommand();
+            this.rankManager = new RankManager(this);
+            this.homeManager = new HomeManager(this);
+            this.warpManager = new WarpManager(this);
+            this.spawnCommand = new SpawnCommand(this);
 
             PluginAPI.init(this);
 
@@ -82,7 +97,7 @@ public final class Plugin extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new TabListListener(this, prefixMap, nickMap, joinMessageManager), this);
-        getServer().getPluginManager().registerEvents(sleepManager, this);
+        getServer().getPluginManager().registerEvents(new PrefixListener(this, prefixMap, nickMap), this);
     }
 
     private void registerTabCompleters() {
@@ -94,7 +109,10 @@ public final class Plugin extends JavaPlugin {
             "heal", "feed", "fly", "vanish", "invsee",
             "gmc", "gms", "gmsp", "craftingtable", "anvil",
             "enderchest", "grindstone", "smithingtable",
-            "stonecutter", "loom", "cartography", "sit", "cam"
+            "stonecutter", "loom", "cartography", "sit", "cam",
+            "rank", "setrank", "home", "sethome", "delhome",
+            "warp", "setwarp", "delwarp", "spawn", "setspawn",
+            "tp", "tpa", "tphere", "tpaccept", "tpdeny"
         };
 
         for (String cmd : commands) {
@@ -117,8 +135,14 @@ public final class Plugin extends JavaPlugin {
 
         // Trigger Commands (sit & cam)
         registerTriggerCommands();
-        
-        // Admin Commands (vanish & invsee)
+
+        // Rank Commands
+        registerRankCommands();
+
+        // Teleport Commands
+        registerTeleportCommands();
+
+        // Admin Commands (includes vanish & invsee)
         registerAdminCommands();
     }
 
@@ -198,15 +222,79 @@ public final class Plugin extends JavaPlugin {
         }
     }
 
+    private void registerRankCommands() {
+        PluginCommand rankCmd = getCommand("rank");
+        if (rankCmd != null) {
+            rankCmd.setExecutor(new RankCommand(this));
+        }
+
+        PluginCommand setRankCmd = getCommand("setrank");
+        if (setRankCmd != null) {
+            setRankCmd.setExecutor(new SetRankCommand(this));
+        }
+    }
+
+    private void registerTeleportCommands() {
+        // Home commands
+        HomeCommands homeCommands = new HomeCommands(homeManager);
+        String[] homeCommandNames = {"sethome", "home", "delhome", "homes"};
+        for (String cmd : homeCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(homeCommands);
+            }
+        }
+
+        // Warp commands
+        WarpCommands warpCommands = new WarpCommands(warpManager);
+        String[] warpCommandNames = {"setwarp", "warp", "delwarp", "warps"};
+        for (String cmd : warpCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(warpCommands);
+            }
+        }
+
+        // Spawn commands
+        String[] spawnCommandNames = {"spawn", "setspawn"};
+        for (String cmd : spawnCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(spawnCommand);
+            }
+        }
+
+        // Teleport commands
+        TeleportCommands teleportCommands = new TeleportCommands(this);
+        String[] tpCommandNames = {"tp", "tpa", "tphere", "tpaccept", "tpdeny"};
+        for (String cmd : tpCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(teleportCommands);
+            }
+        }
+    }
+
     private void registerAdminCommands() {
+        // Vanish & Invsee from our changes
         PluginCommand vanishCmd = getCommand("vanish");
-        PluginCommand invseeCmd = getCommand("invsee");
-        
         if (vanishCmd != null) {
             vanishCmd.setExecutor(vanishCommand);
         }
-        if (invseeCmd != null) {
-            invseeCmd.setExecutor(invseeCommand);
+        
+        // Admin commands from feature branch
+        AdminCommands adminCommands = new AdminCommands();
+        String[] adminCommandNames = {"kick", "invsee", "day", "night", "sun", "rain"};
+        for (String cmd : adminCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                // Use our InvseeCommand instead of the one from AdminCommands
+                if (cmd.equals("invsee")) {
+                    command.setExecutor(invseeCommand);
+                } else {
+                    command.setExecutor(adminCommands);
+                }
+            }
         }
     }
 
@@ -214,7 +302,6 @@ public final class Plugin extends JavaPlugin {
     public void onDisable() {
         // Save all data only if initialized
         if (playerDataManager != null) {
-            playerDataManager.stopAutoSave();
             playerDataManager.savePlayerData();
         }
         if (dataManager != null) {
@@ -235,8 +322,14 @@ public final class Plugin extends JavaPlugin {
         if (tabListManager != null) {
             tabListManager.stopTabListUpdater();
         }
-        if (nametagManager != null) {
-            nametagManager.removeAllTeams();
+        if (homeManager != null) {
+            homeManager.saveHomes();
+        }
+        if (warpManager != null) {
+            warpManager.saveWarps();
+        }
+        if (rankManager != null) {
+            // RankManager saves automatically to database
         }
 
         getLogger().info("Plugin deaktiviert - Alle Daten gespeichert (falls initialisiert).");
@@ -279,15 +372,27 @@ public final class Plugin extends JavaPlugin {
         return tabListManager;
     }
 
-    public SleepManager getSleepManager() {
-        return sleepManager;
-    }
-
     public NametagManager getNametagManager() {
         return nametagManager;
     }
 
     public TriggerCamCommand getTriggerCamCommand() {
         return triggerCamCommand;
+    }
+
+    public RankManager getRankManager() {
+        return rankManager;
+    }
+
+    public HomeManager getHomeManager() {
+        return homeManager;
+    }
+
+    public WarpManager getWarpManager() {
+        return warpManager;
+    }
+
+    public SpawnCommand getSpawnCommand() {
+        return spawnCommand;
     }
 }

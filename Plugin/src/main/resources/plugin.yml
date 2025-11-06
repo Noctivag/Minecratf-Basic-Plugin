@@ -78,6 +78,10 @@ commands:
       /joinmessage toggle <Spieler> - Schaltet Join-Nachricht um
       /joinmessage enable/disable <Spieler> - Aktiviert/Deaktiviert
     aliases: [jmsg, joinmsg]
+  menu:
+    description: Öffnet das Hauptmenü
+    usage: /menu
+    aliases: [servermenu, gui]
   sit:
     description: Setzt dich hin oder lässt dich aufstehen
     usage: /sit
@@ -90,54 +94,77 @@ commands:
     description: Macht dich unsichtbar für andere Spieler
     usage: /vanish
     aliases: [v]
+  rank:
+    description: Zeigt Rang-Informationen und verwaltet Ränge
+    usage: /rank [player|list|create|delete|setprefix|...]
+  setrank:
+    description: Setzt den Rang eines Spielers
+    usage: /setrank <player> <rank>
+  sethome:
+    description: Setzt einen Home-Punkt
+    usage: /sethome [name]
+  home:
+    description: Teleportiert zu einem Home-Punkt
+    usage: /home [name]
+  delhome:
+    description: Löscht einen Home-Punkt
+    usage: /delhome <name>
+  homes:
+    description: Zeigt alle Home-Punkte an
+    usage: /homes
+  setwarp:
+    description: Setzt einen Warp-Punkt
+    usage: /setwarp <name>
+  warp:
+    description: Teleportiert zu einem Warp-Punkt
+    usage: /warp <name>
+  delwarp:
+    description: Löscht einen Warp-Punkt
+    usage: /delwarp <name>
+  warps:
+    description: Zeigt alle Warp-Punkte an
+    usage: /warps
+  spawn:
+    description: Teleportiert zum Spawn
+    usage: /spawn
+  setspawn:
+    description: Setzt den Spawn-Punkt
+    usage: /setspawn
+  tp:
+    description: Teleportiert zu einem Spieler
+    usage: /tp <player>
+  tpa:
+    description: Sendet eine Teleport-Anfrage
+    usage: /tpa <player>
+  tphere:
+    description: Teleportiert einen Spieler zu dir
+    usage: /tphere <player>
+  tpaccept:
+    description: Akzeptiert eine Teleport-Anfrage
+    usage: /tpaccept
+  tpdeny:
+    description: Lehnt eine Teleport-Anfrage ab
+    usage: /tpdeny
+  kick:
+    description: Kickt einen Spieler vom Server
+    usage: /kick <player> [reason]
   invsee:
-    description: Zeigt das Inventar eines anderen Spielers
-    usage: /invsee <Spieler>
-    aliases: [openinv, oi]
+    description: Öffnet das Inventar eines Spielers
+    usage: /invsee <player>
+  day:
+    description: Setzt die Zeit auf Tag
+    usage: /day
+  night:
+    description: Setzt die Zeit auf Nacht
+    usage: /night
+  sun:
+    description: Setzt das Wetter auf sonnig
+    usage: /sun
+  rain:
+    description: Setzt das Wetter auf Regen
+    usage: /rain
 
 permissions:
-  plugin.*:
-    description: Gibt Zugriff auf alle Plugin-Funktionen
-    default: op
-    children:
-      plugin.prefix: true
-      plugin.suffix: true
-      plugin.nick: true
-      plugin.joinmessage: true
-      plugin.sit: true
-      plugin.cam: true
-      plugin.vanish: true
-      plugin.vanish.see: true
-      plugin.invsee: true
-      basiccommands.*: true
-      workbench.*: true
-  plugin.prefix:
-    description: Erlaubt die Nutzung von /prefix und /unprefix
-    default: true
-  plugin.suffix:
-    description: Erlaubt die Nutzung von /suffix und /unsuffix
-    default: true
-  plugin.nick:
-    description: Erlaubt die Nutzung von /nick und /unnick
-    default: true
-  plugin.sit:
-    description: Erlaubt die Nutzung des /sit Befehls
-    default: true
-  plugin.cam:
-    description: Erlaubt die Nutzung des /cam Befehls
-    default: true
-  plugin.vanish:
-    description: Erlaubt die Nutzung des /vanish Befehls
-    default: op
-  plugin.vanish.see:
-    description: Erlaubt das Sehen von unsichtbaren Spielern
-    default: op
-  plugin.invsee:
-    description: Erlaubt die Nutzung des /invsee Befehls
-    default: op
-  plugin.joinmessage:
-    description: Erlaubt das Verwalten von Join-Nachrichten
-    default: op
   basiccommands.*:
     description: Gibt Zugriff auf alle Basic-Commands
     default: op
@@ -211,3 +238,114 @@ permissions:
   workbench.cartography:
     description: Erlaubt die Nutzung des Kartentischs
     default: true
+  plugin.*:
+    description: Gibt Zugriff auf alle Plugin-Funktionen
+    default: op
+    children:
+      plugin.prefix: true
+      plugin.suffix: true
+      plugin.nick: true
+      plugin.joinmessage: true
+      plugin.sit: true
+      plugin.cam: true
+      plugin.vanish: true
+      plugin.vanish.see: true
+      plugin.invsee: true
+      basiccommands.*: true
+      workbench.*: true
+  plugin.prefix:
+    description: Erlaubt die Nutzung von /prefix und /unprefix
+    default: true
+  plugin.suffix:
+    description: Erlaubt die Nutzung von /suffix und /unsuffix
+    default: true
+  plugin.nick:
+    description: Erlaubt die Nutzung von /nick und /unnick
+    default: true
+  plugin.sit:
+    description: Erlaubt die Nutzung des /sit Befehls
+    default: true
+  plugin.cam:
+    description: Erlaubt die Nutzung des /cam Befehls
+    default: true
+  plugin.vanish:
+    description: Erlaubt die Nutzung des /vanish Befehls
+    default: op
+  plugin.vanish.see:
+    description: Erlaubt das Sehen von unsichtbaren Spielern
+    default: op
+  plugin.invsee:
+    description: Erlaubt die Nutzung des /invsee Befehls
+    default: op
+  plugin.joinmessage:
+    description: Erlaubt das Verwalten von Join-Nachrichten
+    default: op
+  plugin.sit:
+    description: Erlaubt die Nutzung des /sit Befehls
+    default: true
+  plugin.cam:
+    description: Erlaubt die Nutzung des /cam Befehls
+    default: true
+  rank.list:
+    description: Erlaubt das Anzeigen aller Ränge
+    default: true
+  rank.admin:
+    description: Erlaubt die Verwaltung von Rängen
+    default: op
+  essentials.sethome:
+    description: Erlaubt das Setzen von Home-Punkten
+    default: true
+  essentials.home:
+    description: Erlaubt das Teleportieren zu Home-Punkten
+    default: true
+  essentials.delhome:
+    description: Erlaubt das Löschen von Home-Punkten
+    default: true
+  essentials.homes:
+    description: Erlaubt das Anzeigen aller Home-Punkte
+    default: true
+  essentials.setwarp:
+    description: Erlaubt das Setzen von Warp-Punkten
+    default: op
+  essentials.warp:
+    description: Erlaubt das Teleportieren zu Warp-Punkten
+    default: true
+  essentials.delwarp:
+    description: Erlaubt das Löschen von Warp-Punkten
+    default: op
+  essentials.warps:
+    description: Erlaubt das Anzeigen aller Warp-Punkte
+    default: true
+  essentials.spawn:
+    description: Erlaubt das Teleportieren zum Spawn
+    default: true
+  essentials.setspawn:
+    description: Erlaubt das Setzen des Spawn-Punkts
+    default: op
+  essentials.tp:
+    description: Erlaubt das Teleportieren zu Spielern
+    default: op
+  essentials.tpa:
+    description: Erlaubt das Senden von Teleport-Anfragen
+    default: true
+  essentials.tphere:
+    description: Erlaubt das Teleportieren von Spielern zu sich
+    default: op
+  essentials.tpaccept:
+    description: Erlaubt das Akzeptieren von Teleport-Anfragen
+    default: true
+  essentials.tpdeny:
+    description: Erlaubt das Ablehnen von Teleport-Anfragen
+    default: true
+  admin.kick:
+    description: Erlaubt das Kicken von Spielern
+    default: op
+  admin.invsee:
+    description: Erlaubt das Öffnen von Spieler-Inventaren
+    default: op
+  admin.time:
+    description: Erlaubt das Ändern der Zeit
+    default: op
+  admin.weather:
+    description: Erlaubt das Ändern des Wetters
+    default: op

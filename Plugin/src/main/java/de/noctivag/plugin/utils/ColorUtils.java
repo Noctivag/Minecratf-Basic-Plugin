@@ -352,4 +352,31 @@ public class ColorUtils {
             return 0xFFFFFF; // Fallback zu Weiß
         }
     }
+
+    /**
+     * Translates legacy Minecraft color codes (&a, &b, etc.) to actual colored text
+     */
+    public static String translateColorCodes(String text) {
+        if (text == null || text.isEmpty()) return "";
+        return text.replace("&", "§");
+    }
+
+    /**
+     * Combines rank prefix with custom prefix
+     * @param rankPrefix The rank prefix (can be null or empty)
+     * @param customPrefix The custom prefix (can be null or empty)
+     * @return Combined prefix string
+     */
+    public static String combinePrefix(String rankPrefix, String customPrefix) {
+        if (rankPrefix == null) rankPrefix = "";
+        if (customPrefix == null) customPrefix = "";
+        
+        if (rankPrefix.isEmpty()) {
+            return customPrefix;
+        } else if (customPrefix.isEmpty()) {
+            return rankPrefix;
+        } else {
+            return rankPrefix + " " + customPrefix;
+        }
+    }
 }

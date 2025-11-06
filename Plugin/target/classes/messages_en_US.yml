@@ -23,3 +23,7 @@ commands:
 
 workbench:
   no-permission: "&cYou don't have permission to open this workbench"
+
+sleep:
+  player-sleeping: "&e%player% &7is now sleeping. &a%sleeping%&7/&a%required% &7players sleeping (&7%total% &7online&7)"
+  night-skipped: "&aEnough players are sleeping! Skipping the night..."
