@@ -43,18 +43,33 @@ public class RankManager {
             defaultRank.addPermission("plugin.sit");
             defaultRank.addPermission("plugin.cosmetics");
             defaultRank.addPermission("workbench.*");
+            defaultRank.addPermission("essentials.home");
+            defaultRank.addPermission("essentials.sethome");
+            defaultRank.addPermission("essentials.delhome");
+            defaultRank.addPermission("essentials.homes");
+            defaultRank.addPermission("essentials.spawn");
+            defaultRank.addPermission("essentials.warp");
+            defaultRank.addPermission("essentials.warps");
+            defaultRank.addPermission("essentials.tpa");
+            defaultRank.addPermission("essentials.tpaccept");
+            defaultRank.addPermission("essentials.tpdeny");
             ranks.put("default", defaultRank);
 
             // Create VIP rank
             Rank vipRank = new Rank("vip", "&6[VIP] &e", "", 10);
-            vipRank.addPermission("*");
+            vipRank.addPermission("basiccommands.fly");
+            vipRank.addPermission("basiccommands.heal");
+            vipRank.addPermission("basiccommands.feed");
             vipRank.addInheritedRank("default");
             ranks.put("vip", vipRank);
 
             // Create Mod rank
             Rank modRank = new Rank("mod", "&9[Mod] &b", "", 50);
-            modRank.addPermission("*");
-            modRank.addPermission("basiccommands.*");
+            modRank.addPermission("essentials.tp");
+            modRank.addPermission("essentials.tphere");
+            modRank.addPermission("admin.kick");
+            modRank.addPermission("admin.time");
+            modRank.addPermission("admin.weather");
             modRank.addInheritedRank("vip");
             ranks.put("mod", modRank);
 

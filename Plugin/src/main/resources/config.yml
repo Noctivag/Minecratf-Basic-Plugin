@@ -53,6 +53,10 @@ commands:
       - Admin
       - Owner
       - Staff
+  home:
+    max-homes: 5 # Maximum number of homes per player
+  teleport:
+    request-timeout: 60 # Teleport request timeout in seconds
 
 # Partikel-Effekte
 particles:

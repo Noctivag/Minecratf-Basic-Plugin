@@ -21,7 +21,7 @@ public class HomeManager {
         this.plugin = plugin;
         this.homesFile = new File(plugin.getDataFolder(), "homes.yml");
         this.homes = new HashMap<>();
-        this.maxHomes = 5; // Default max homes per player
+        this.maxHomes = plugin.getConfig().getInt("commands.home.max-homes", 5);
         loadHomes();
     }
 

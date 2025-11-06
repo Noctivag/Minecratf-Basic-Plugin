@@ -245,7 +245,7 @@ public final class Plugin extends JavaPlugin {
         }
 
         // Teleport commands
-        TeleportCommands teleportCommands = new TeleportCommands();
+        TeleportCommands teleportCommands = new TeleportCommands(this);
         String[] tpCommandNames = {"tp", "tpa", "tphere", "tpaccept", "tpdeny"};
         for (String cmd : tpCommandNames) {
             PluginCommand command = getCommand(cmd);

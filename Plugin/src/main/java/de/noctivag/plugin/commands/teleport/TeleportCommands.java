@@ -9,18 +9,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class TeleportCommands implements CommandExecutor {
     private final Map<UUID, UUID> teleportRequests; // target -> requester
     private final Map<UUID, Long> requestExpiry;
-    private static final long REQUEST_TIMEOUT = 60000; // 60 seconds
+    private final long requestTimeout; // Configurable timeout
 
-    public TeleportCommands() {
-        this.teleportRequests = new HashMap<>();
-        this.requestExpiry = new HashMap<>();
+    public TeleportCommands(JavaPlugin plugin) {
+        this.teleportRequests = new ConcurrentHashMap<>();
+        this.requestExpiry = new ConcurrentHashMap<>();
+        this.requestTimeout = plugin.getConfig().getLong("commands.teleport.request-timeout", 60) * 1000; // Convert to milliseconds
     }
 
     @Override
@@ -92,7 +94,7 @@ public class TeleportCommands implements CommandExecutor {
         }
 
         teleportRequests.put(target.getUniqueId(), player.getUniqueId());
-        requestExpiry.put(target.getUniqueId(), System.currentTimeMillis() + REQUEST_TIMEOUT);
+        requestExpiry.put(target.getUniqueId(), System.currentTimeMillis() + requestTimeout);
 
         sender.sendMessage(Component.text("Teleport request sent to " + target.getName()).color(NamedTextColor.GREEN));
         target.sendMessage(Component.text(player.getName() + " wants to teleport to you. Use /tpaccept or /tpdeny").color(NamedTextColor.YELLOW));
