@@ -202,7 +202,7 @@ public class RankCommand implements CommandExecutor {
             return;
         }
         rank.setPrefix(prefix);
-        rankManager.saveRanks();
+        rankManager.saveRank(rank); // Save to database
         sender.sendMessage(Component.text("Rank prefix updated!").color(NamedTextColor.GREEN));
     }
 
@@ -213,7 +213,7 @@ public class RankCommand implements CommandExecutor {
             return;
         }
         rank.setSuffix(suffix);
-        rankManager.saveRanks();
+        rankManager.saveRank(rank); // Save to database
         sender.sendMessage(Component.text("Rank suffix updated!").color(NamedTextColor.GREEN));
     }
 
@@ -226,7 +226,7 @@ public class RankCommand implements CommandExecutor {
         try {
             int priority = Integer.parseInt(priorityStr);
             rank.setPriority(priority);
-            rankManager.saveRanks();
+            rankManager.saveRank(rank); // Save to database
             sender.sendMessage(Component.text("Rank priority updated!").color(NamedTextColor.GREEN));
         } catch (NumberFormatException e) {
             sender.sendMessage(Component.text("Invalid priority number!").color(NamedTextColor.RED));
@@ -240,7 +240,7 @@ public class RankCommand implements CommandExecutor {
             return;
         }
         rank.addPermission(permission);
-        rankManager.saveRanks();
+        rankManager.saveRank(rank); // Save to database
         sender.sendMessage(Component.text("Permission added to rank!").color(NamedTextColor.GREEN));
     }
 
@@ -251,7 +251,7 @@ public class RankCommand implements CommandExecutor {
             return;
         }
         rank.removePermission(permission);
-        rankManager.saveRanks();
+        rankManager.saveRank(rank); // Save to database
         sender.sendMessage(Component.text("Permission removed from rank!").color(NamedTextColor.GREEN));
     }
 }

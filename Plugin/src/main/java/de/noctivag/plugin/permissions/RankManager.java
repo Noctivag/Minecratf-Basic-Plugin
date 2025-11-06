@@ -1,40 +1,93 @@
 package de.noctivag.plugin.permissions;
 
 import de.noctivag.plugin.Plugin;
+import de.noctivag.plugin.database.DatabaseProvider;
+import de.noctivag.plugin.database.MySQLProvider;
+import de.noctivag.plugin.database.SQLiteProvider;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 /**
- * Manages player ranks and permissions
+ * Manages player ranks and permissions with automatic database detection
  */
 public class RankManager {
     private final Plugin plugin;
     private final Map<String, Rank> ranks;
     private final Map<UUID, Set<String>> playerRanks;
-    private final File ranksFile;
-    private final File playerRanksFile;
+    private final DatabaseProvider database;
     private String defaultRank;
+    private final boolean isBungeeCord;
 
     public RankManager(Plugin plugin) {
         this.plugin = plugin;
         this.ranks = new ConcurrentHashMap<>();
         this.playerRanks = new ConcurrentHashMap<>();
-        this.ranksFile = new File(plugin.getDataFolder(), "ranks.yml");
-        this.playerRanksFile = new File(plugin.getDataFolder(), "player_ranks.yml");
-        this.defaultRank = "default";
         
-        loadRanks();
-        loadPlayerRanks();
+        // Detect BungeeCord environment
+        this.isBungeeCord = detectBungeeCord();
+        
+        // Initialize appropriate database provider
+        if (isBungeeCord) {
+            plugin.getLogger().info("BungeeCord detected! Using MySQL for network-wide rank synchronization");
+            this.database = createMySQLProvider();
+        } else {
+            plugin.getLogger().info("Standalone mode detected! Using SQLite for local storage");
+            this.database = new SQLiteProvider(plugin);
+        }
+        
+        // Initialize database
+        database.initialize();
+        
+        // Load data from database
+        loadFromDatabase();
+        
+        // Create default ranks if none exist
         createDefaultRanks();
+    }
+    
+    /**
+     * Detects if the plugin is running on a BungeeCord network
+     */
+    private boolean detectBungeeCord() {
+        try {
+            Class.forName("net.md_5.bungee.api.ProxyServer");
+            return Bukkit.getServer().spigot().getConfig().getBoolean("settings.bungeecord", false);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Creates MySQL provider from config settings
+     */
+    private DatabaseProvider createMySQLProvider() {
+        String host = plugin.getConfig().getString("database.mysql.host", "localhost");
+        int port = plugin.getConfig().getInt("database.mysql.port", 3306);
+        String dbName = plugin.getConfig().getString("database.mysql.database", "minecraft_ranks");
+        String username = plugin.getConfig().getString("database.mysql.username", "root");
+        String password = plugin.getConfig().getString("database.mysql.password", "password");
+        
+        return new MySQLProvider(plugin, host, port, dbName, username, password);
+    }
+    
+    /**
+     * Load ranks and player data from database
+     */
+    private void loadFromDatabase() {
+        // Load ranks
+        Map<String, Rank> loadedRanks = database.loadRanks();
+        ranks.putAll(loadedRanks);
+        
+        // Load player ranks
+        Map<UUID, Set<String>> loadedPlayerRanks = database.loadPlayerRanks();
+        playerRanks.putAll(loadedPlayerRanks);
+        
+        // Load default rank setting
+        defaultRank = database.getDefaultRank();
+        
+        plugin.getLogger().info("Loaded " + ranks.size() + " ranks and " + playerRanks.size() + " player assignments from database");
     }
 
     private void createDefaultRanks() {
@@ -55,6 +108,7 @@ public class RankManager {
             defaultRank.addPermission("essentials.tpaccept");
             defaultRank.addPermission("essentials.tpdeny");
             ranks.put("default", defaultRank);
+            database.saveRank(defaultRank);
 
             // Create VIP rank
             Rank vipRank = new Rank("vip", "&6[VIP] &e", "", 10);
@@ -63,6 +117,7 @@ public class RankManager {
             vipRank.addPermission("basiccommands.feed");
             vipRank.addInheritedRank("default");
             ranks.put("vip", vipRank);
+            database.saveRank(vipRank);
 
             // Create Mod rank
             Rank modRank = new Rank("mod", "&9[Mod] &b", "", 50);
@@ -73,100 +128,16 @@ public class RankManager {
             modRank.addPermission("admin.weather");
             modRank.addInheritedRank("vip");
             ranks.put("mod", modRank);
+            database.saveRank(modRank);
 
             // Create Admin rank
             Rank adminRank = new Rank("admin", "&c[Admin] &4", "", 100);
             adminRank.addPermission("*");
             adminRank.addInheritedRank("mod");
             ranks.put("admin", adminRank);
-
-            saveRanks();
-        }
-    }
-
-    public void loadRanks() {
-        if (!ranksFile.exists()) {
-            return;
-        }
-
-        FileConfiguration config = YamlConfiguration.loadConfiguration(ranksFile);
-        ConfigurationSection ranksSection = config.getConfigurationSection("ranks");
-        
-        if (ranksSection != null) {
-            for (String rankName : ranksSection.getKeys(false)) {
-                ConfigurationSection rankSection = ranksSection.getConfigurationSection(rankName);
-                if (rankSection != null) {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("prefix", rankSection.getString("prefix", ""));
-                    data.put("suffix", rankSection.getString("suffix", ""));
-                    data.put("priority", rankSection.getInt("priority", 0));
-                    data.put("permissions", rankSection.getStringList("permissions"));
-                    data.put("inherited", rankSection.getStringList("inherited"));
-                    
-                    Rank rank = Rank.deserialize(rankName, data);
-                    ranks.put(rankName, rank);
-                }
-            }
-        }
-
-        defaultRank = config.getString("default-rank", "default");
-    }
-
-    public void saveRanks() {
-        FileConfiguration config = new YamlConfiguration();
-        config.set("default-rank", defaultRank);
-
-        for (Map.Entry<String, Rank> entry : ranks.entrySet()) {
-            String rankName = entry.getKey();
-            Rank rank = entry.getValue();
-            Map<String, Object> data = rank.serialize();
+            database.saveRank(adminRank);
             
-            config.set("ranks." + rankName + ".prefix", data.get("prefix"));
-            config.set("ranks." + rankName + ".suffix", data.get("suffix"));
-            config.set("ranks." + rankName + ".priority", data.get("priority"));
-            config.set("ranks." + rankName + ".permissions", data.get("permissions"));
-            config.set("ranks." + rankName + ".inherited", data.get("inherited"));
-        }
-
-        try {
-            config.save(ranksFile);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save ranks.yml", e);
-        }
-    }
-
-    public void loadPlayerRanks() {
-        if (!playerRanksFile.exists()) {
-            return;
-        }
-
-        FileConfiguration config = YamlConfiguration.loadConfiguration(playerRanksFile);
-        ConfigurationSection playersSection = config.getConfigurationSection("players");
-        
-        if (playersSection != null) {
-            for (String uuidStr : playersSection.getKeys(false)) {
-                try {
-                    UUID uuid = UUID.fromString(uuidStr);
-                    List<String> rankNames = playersSection.getStringList(uuidStr);
-                    playerRanks.put(uuid, new HashSet<>(rankNames));
-                } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("Invalid UUID in player_ranks.yml: " + uuidStr);
-                }
-            }
-        }
-    }
-
-    public void savePlayerRanks() {
-        FileConfiguration config = new YamlConfiguration();
-
-        for (Map.Entry<UUID, Set<String>> entry : playerRanks.entrySet()) {
-            config.set("players." + entry.getKey().toString(), new ArrayList<>(entry.getValue()));
-        }
-
-        try {
-            config.save(playerRanksFile);
-        } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save player_ranks.yml", e);
+            plugin.getLogger().info("Created default ranks in database");
         }
     }
 
@@ -177,12 +148,12 @@ public class RankManager {
     public void createRank(String name, String prefix, String suffix, int priority) {
         Rank rank = new Rank(name.toLowerCase(), prefix, suffix, priority);
         ranks.put(name.toLowerCase(), rank);
-        saveRanks();
+        database.saveRank(rank);
     }
 
     public void deleteRank(String name) {
         ranks.remove(name.toLowerCase());
-        saveRanks();
+        database.deleteRank(name.toLowerCase());
     }
 
     public Set<String> getAllRankNames() {
@@ -216,13 +187,13 @@ public class RankManager {
         Set<String> ranks = new HashSet<>();
         ranks.add(rankName.toLowerCase());
         playerRanks.put(playerId, ranks);
-        savePlayerRanks();
+        database.savePlayerRanks(playerId, ranks);
     }
 
     public void addPlayerRank(UUID playerId, String rankName) {
         Set<String> ranks = playerRanks.computeIfAbsent(playerId, k -> new HashSet<>());
         ranks.add(rankName.toLowerCase());
-        savePlayerRanks();
+        database.savePlayerRanks(playerId, ranks);
     }
 
     public void removePlayerRank(UUID playerId, String rankName) {
@@ -231,8 +202,10 @@ public class RankManager {
             ranks.remove(rankName.toLowerCase());
             if (ranks.isEmpty()) {
                 playerRanks.remove(playerId);
+                database.removePlayerRanks(playerId);
+            } else {
+                database.savePlayerRanks(playerId, ranks);
             }
-            savePlayerRanks();
         }
     }
 
@@ -274,6 +247,28 @@ public class RankManager {
 
     public void setDefaultRank(String defaultRank) {
         this.defaultRank = defaultRank;
-        saveRanks();
+        database.setDefaultRank(defaultRank);
+    }
+    
+    /**
+     * Save a rank to the database
+     */
+    public void saveRank(Rank rank) {
+        database.saveRank(rank);
+    }
+    
+    /**
+     * Shutdown the rank manager and close database connections
+     */
+    public void shutdown() {
+        database.close();
+        plugin.getLogger().info("RankManager shutdown complete");
+    }
+    
+    /**
+     * Check if running in BungeeCord mode
+     */
+    public boolean isBungeeCordMode() {
+        return isBungeeCord;
     }
 }

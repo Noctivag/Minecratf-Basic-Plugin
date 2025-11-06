@@ -288,8 +288,7 @@ public final class Plugin extends JavaPlugin {
             triggerCamCommand.restoreAllPlayers();
         }
         if (rankManager != null) {
-            rankManager.saveRanks();
-            rankManager.savePlayerRanks();
+            rankManager.shutdown(); // Properly close database connections
         }
         if (homeManager != null) {
             homeManager.saveHomes();
