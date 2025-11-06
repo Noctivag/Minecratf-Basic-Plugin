@@ -5,19 +5,45 @@ A comprehensive all-in-one Minecraft server plugin with rank/permission system a
 ## Features
 
 ### 🎖️ Rank & Permission System
-Built-in rank management system similar to LuckPerms:
+Built-in rank management system with **BungeeCord network support**:
+- **BungeeCord Detection**: Automatically detects if running on a BungeeCord network
+- **Dual Database Support**: 
+  - **Standalone Mode**: SQLite database for local storage
+  - **Network Mode**: MySQL/MariaDB for cross-server synchronization
 - **Multiple Ranks**: Create unlimited custom ranks with priorities
 - **Rank Inheritance**: Ranks can inherit permissions from other ranks
 - **Custom Prefixes & Suffixes**: Set colored prefixes and suffixes for each rank
 - **Permission Management**: Fine-grained permission control per rank
 - **Player Rank Assignment**: Assign multiple ranks to players
-- **Persistent Storage**: All rank data stored in YAML files
+- **Network Synchronization**: Changes sync instantly across all BungeeCord servers
 
 #### Default Ranks
 - **default** - Basic player rank with cosmetic permissions
 - **vip** - VIP rank with extended permissions
 - **mod** - Moderator rank with admin tools
 - **admin** - Full administrative access
+
+#### Database Modes
+**Standalone Mode (SQLite)**:
+- Automatically used when BungeeCord is not detected
+- Stores data locally in `data.db` file
+- No configuration required
+
+**Network Mode (MySQL)**:
+- Automatically activated when BungeeCord is detected
+- Requires MySQL/MariaDB database
+- Configure in `config.yml`:
+```yaml
+database:
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft_ranks
+    username: root
+    password: password
+```
+- Automatic table creation on first startup
+- HikariCP connection pooling for optimal performance
 
 ### 🏠 Home System
 - `/sethome [name]` - Set a home location (max 5 homes)
@@ -141,6 +167,15 @@ settings:
   auto-save-interval: 300
   debug-mode: false
 
+# Database configuration for BungeeCord network mode
+database:
+  mysql:
+    host: localhost
+    port: 3306
+    database: minecraft_ranks
+    username: root
+    password: password
+
 commands:
   heal:
     cooldown: 300
@@ -149,31 +184,66 @@ commands:
     min-length: 3
     max-length: 16
     allow-colors: true
+  home:
+    max-homes: 5
+  teleport:
+    request-timeout: 60
 ```
 
-### Rank Configuration (ranks.yml)
-Ranks are automatically created on first startup with sensible defaults. You can customize them through commands or by editing the file.
+### Database Storage
+The plugin automatically determines which database to use:
+
+**Standalone Mode (No BungeeCord)**:
+- Uses SQLite database stored in `plugins/plugin/data.db`
+- No configuration needed
+- Automatic table creation
+
+**BungeeCord Network Mode**:
+- Uses MySQL/MariaDB for network-wide synchronization
+- Configure MySQL connection in `config.yml` (see above)
+- All servers in the network share the same rank data
+- Automatic table creation on first server startup
+- HikariCP connection pooling (configurable pool sizes)
+
+**Note**: In BungeeCord mode, the old YAML files (`ranks.yml`, `player_ranks.yml`) are not used. All data is stored in the MySQL database.
 
 ### Data Storage
-- `ranks.yml` - Rank definitions and permissions
-- `player_ranks.yml` - Player rank assignments
+
+**Standalone Mode**:
+- `data.db` - SQLite database with all rank/permission data
+
+**BungeeCord Network Mode**:
+- MySQL database with tables: `ranks`, `player_ranks`, `settings`
+
+**Other Data Files** (both modes):
 - `homes.yml` - Player home locations
 - `warps.yml` - Server warp points
 - `spawn.yml` - Server spawn location
 
 ## Installation
 
+### Standalone Server
 1. Download the plugin JAR file
 2. Place it in your server's `plugins` folder
 3. Start/restart your server
-4. Default ranks and configurations will be created automatically
-5. Customize ranks and permissions as needed
+4. Default ranks will be created automatically in SQLite
+5. Plugin is ready to use!
+
+### BungeeCord Network
+1. Download the plugin JAR file
+2. Place it in the `plugins` folder of **each server** in your network
+3. Set up a MySQL/MariaDB database
+4. Configure database credentials in `config.yml` on all servers
+5. Enable BungeeCord in `spigot.yml` (`settings.bungeecord: true`)
+6. Start/restart all servers
+7. Plugin will automatically create MySQL tables and sync ranks across the network
 
 ## Requirements
 
 - Minecraft 1.21+
 - Paper/Spigot server
 - Java 21+
+- **For BungeeCord mode**: MySQL 5.7+ or MariaDB 10.2+
 
 ## Building from Source
 
