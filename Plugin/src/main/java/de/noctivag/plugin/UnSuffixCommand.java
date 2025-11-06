@@ -32,6 +32,7 @@ public class UnSuffixCommand implements CommandExecutor {
         }
 
         playerDataManager.removeSuffix(player.getName());
+        playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
 
         player.sendMessage(Component.text("Dein Suffix wurde entfernt!").color(NamedTextColor.GREEN));

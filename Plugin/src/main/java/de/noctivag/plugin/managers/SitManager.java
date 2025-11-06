@@ -29,20 +29,19 @@ public class SitManager {
             return false;
         }
 
-        Location loc = player.getLocation().clone();
-        
-        // Positioniere ArmorStand 0.4 Blöcke höher (tiefer sitzen)
-        loc.add(0, 0.4, 0);
-        
-        ArmorStand armorStand = (ArmorStand) player.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
-        armorStand.setVisible(false);
-        armorStand.setGravity(false);
-        armorStand.setInvulnerable(true);
-        armorStand.setMarker(true);
-        armorStand.setSmall(true);
-        armorStand.setCollidable(false);
-        armorStand.setCanPickupItems(false);
-        armorStand.addPassenger(player);
+    Location playerLocation = player.getLocation();
+    Location seatLocation = playerLocation.clone().subtract(0.0, 1.25, 0.0);
+
+    ArmorStand armorStand = (ArmorStand) player.getWorld().spawnEntity(seatLocation, EntityType.ARMOR_STAND);
+    armorStand.setVisible(false);
+    armorStand.setGravity(false);
+    armorStand.setInvulnerable(true);
+    armorStand.setMarker(true);
+    armorStand.setSmall(true);
+    armorStand.setCollidable(false);
+    armorStand.setCanPickupItems(false);
+    armorStand.setRotation(playerLocation.getYaw(), 0.0f);
+    armorStand.addPassenger(player);
 
         sittingPlayers.put(player.getUniqueId(), armorStand);
         return true;
@@ -57,15 +56,18 @@ public class SitManager {
         ArmorStand armorStand = sittingPlayers.remove(player.getUniqueId());
         if (armorStand != null) {
             // Speichere Position vor dem Entfernen
-            Location standLocation = armorStand.getLocation().clone();
-            // Setze Y-Position auf sicheren Boden (leicht über dem ArmorStand)
-            standLocation.setY(standLocation.getY() + 0.1);
+            Location dismountLocation = armorStand.getLocation().clone().add(0.0, 1.35, 0.0);
+            dismountLocation.setPitch(player.getLocation().getPitch());
+            dismountLocation.setYaw(player.getLocation().getYaw());
             
             // Entferne ArmorStand
             armorStand.remove();
             
             // Teleportiere Spieler auf sichere Position
-            player.teleport(standLocation);
+            if (player.isInsideVehicle()) {
+                player.leaveVehicle();
+            }
+            player.teleport(dismountLocation);
             
             return true;
         }

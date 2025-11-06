@@ -263,22 +263,6 @@ permissions:
   plugin.cam:
     description: Erlaubt den Kamera-Modus
     default: true
-      workbench.*: true
-  plugin.prefix:
-    description: Erlaubt die Nutzung von /prefix und /unprefix
-    default: true
-  plugin.suffix:
-    description: Erlaubt die Nutzung von /suffix und /unsuffix
-    default: true
-  plugin.nick:
-    description: Erlaubt die Nutzung von /nick und /unnick
-    default: true
-  plugin.sit:
-    description: Erlaubt die Nutzung des /sit Befehls
-    default: true
-  plugin.cam:
-    description: Erlaubt die Nutzung des /cam Befehls
-    default: true
   plugin.vanish:
     description: Erlaubt die Nutzung des /vanish Befehls
     default: op
@@ -291,10 +275,7 @@ permissions:
   plugin.joinmessage:
     description: Erlaubt das Verwalten von Join-Nachrichten
     default: op
-  plugin.sit:
-    description: Erlaubt die Nutzung des /sit Befehls
-    default: true
-  plugin.cam:
+  rank.list:
     description: Erlaubt die Nutzung des /cam Befehls
     default: true
   rank.list:

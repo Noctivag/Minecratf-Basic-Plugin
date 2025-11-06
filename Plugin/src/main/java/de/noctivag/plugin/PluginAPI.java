@@ -1,8 +1,10 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.data.PlayerDataManager;
+import de.noctivag.plugin.managers.NametagManager;
+import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
-import de.noctivag.plugin.utils.ColorUtils;
 
 /**
  * Öffentliche API für andere Plugins
@@ -31,32 +33,88 @@ public class PluginAPI {
 
     // Prefix Methoden
     public void setPrefix(Player player, String prefix) {
-        plugin.getPrefixMap().put(player.getName(), prefix);
-        updatePlayerDisplay(player);
+        PlayerDataManager dataManager = plugin.getPlayerDataManager();
+        NametagManager nametagManager = plugin.getNametagManager();
+
+        if (dataManager != null) {
+            dataManager.setPrefix(player.getName(), prefix);
+            dataManager.savePlayerData();
+        }
+
+        if (nametagManager != null) {
+            nametagManager.updateNametag(player);
+        } else {
+            updatePlayerDisplay(player);
+        }
     }
 
     public String getPrefix(Player player) {
-        return plugin.getPrefixMap().getOrDefault(player.getName(), "");
+        PlayerDataManager dataManager = plugin.getPlayerDataManager();
+        if (dataManager == null) {
+            return "";
+        }
+
+        String storedPrefix = dataManager.getPrefix(player.getName());
+        return storedPrefix != null ? storedPrefix : "";
     }
 
     public void removePrefix(Player player) {
-        plugin.getPrefixMap().remove(player.getName());
-        updatePlayerDisplay(player);
+        PlayerDataManager dataManager = plugin.getPlayerDataManager();
+        NametagManager nametagManager = plugin.getNametagManager();
+
+        if (dataManager != null) {
+            dataManager.removePrefix(player.getName());
+            dataManager.savePlayerData();
+        }
+
+        if (nametagManager != null) {
+            nametagManager.updateNametag(player);
+        } else {
+            updatePlayerDisplay(player);
+        }
     }
 
     // Nickname Methoden
     public void setNickname(Player player, String nickname) {
-        plugin.getNickMap().put(player.getName(), nickname);
-        updatePlayerDisplay(player);
+        PlayerDataManager dataManager = plugin.getPlayerDataManager();
+        NametagManager nametagManager = plugin.getNametagManager();
+
+        if (dataManager != null) {
+            dataManager.setNickname(player.getName(), nickname);
+            dataManager.savePlayerData();
+        }
+
+        if (nametagManager != null) {
+            nametagManager.updateNametag(player);
+        } else {
+            updatePlayerDisplay(player);
+        }
     }
 
     public String getNickname(Player player) {
-        return plugin.getNickMap().getOrDefault(player.getName(), player.getName());
+        PlayerDataManager dataManager = plugin.getPlayerDataManager();
+        if (dataManager == null) {
+            return player.getName();
+        }
+
+        String storedNick = dataManager.getNickname(player.getName());
+        return storedNick != null ? storedNick : player.getName();
     }
 
     public void removeNickname(Player player) {
-        plugin.getNickMap().remove(player.getName());
-        updatePlayerDisplay(player);
+        PlayerDataManager dataManager = plugin.getPlayerDataManager();
+        NametagManager nametagManager = plugin.getNametagManager();
+
+        if (dataManager != null) {
+            dataManager.removeNickname(player.getName());
+            dataManager.savePlayerData();
+        }
+
+        if (nametagManager != null) {
+            nametagManager.updateNametag(player);
+        } else {
+            updatePlayerDisplay(player);
+        }
     }
 
     // Join Message Methoden

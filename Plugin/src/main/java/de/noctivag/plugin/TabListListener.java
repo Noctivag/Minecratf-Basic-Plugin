@@ -1,5 +1,6 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.data.PlayerDataManager;
 import de.noctivag.plugin.permissions.Rank;
 import de.noctivag.plugin.permissions.RankManager;
 import de.noctivag.plugin.utils.ColorUtils;
@@ -11,22 +12,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class TabListListener implements Listener {
-    private final Map<String, String> prefixMap;
-    private final Map<String, String> nickMap;
+    private final PlayerDataManager playerDataManager;
     private final JoinMessageManager joinMessageManager;
     private final Plugin plugin;
     private final RankManager rankManager;
 
-    public TabListListener(@NotNull Plugin plugin, @NotNull Map<String, String> prefixMap,
-                           @NotNull Map<String, String> nickMap, @NotNull JoinMessageManager joinMessageManager) {
+    public TabListListener(@NotNull Plugin plugin,
+                           PlayerDataManager playerDataManager,
+                           @NotNull JoinMessageManager joinMessageManager) {
         this.plugin = Objects.requireNonNull(plugin, "Plugin cannot be null");
-        this.prefixMap = new ConcurrentHashMap<>(prefixMap);
-        this.nickMap = new ConcurrentHashMap<>(nickMap);
+        this.playerDataManager = playerDataManager;
         this.joinMessageManager = Objects.requireNonNull(joinMessageManager, "JoinMessageManager cannot be null");
         this.rankManager = plugin.getRankManager();
     }
@@ -38,8 +36,19 @@ public class TabListListener implements Listener {
             if (player == null) return;
 
             String playerName = player.getName();
-            String customPrefix = prefixMap.getOrDefault(playerName, "");
-            String nick = nickMap.getOrDefault(playerName, playerName);
+            String customPrefix = "";
+            String nick = playerName;
+
+            if (playerDataManager != null) {
+                String storedPrefix = playerDataManager.getPrefix(playerName);
+                String storedNick = playerDataManager.getNickname(playerName);
+                if (storedPrefix != null) {
+                    customPrefix = storedPrefix;
+                }
+                if (storedNick != null && !storedNick.isEmpty()) {
+                    nick = storedNick;
+                }
+            }
 
             // Get rank prefix if available
             String rankPrefix = "";
@@ -92,8 +101,19 @@ public class TabListListener implements Listener {
     public void updatePlayerDisplay(@NotNull Player player) {
         try {
             String playerName = player.getName();
-            String customPrefix = prefixMap.getOrDefault(playerName, "");
-            String nick = nickMap.getOrDefault(playerName, playerName);
+            String customPrefix = "";
+            String nick = playerName;
+
+            if (playerDataManager != null) {
+                String storedPrefix = playerDataManager.getPrefix(playerName);
+                String storedNick = playerDataManager.getNickname(playerName);
+                if (storedPrefix != null) {
+                    customPrefix = storedPrefix;
+                }
+                if (storedNick != null && !storedNick.isEmpty()) {
+                    nick = storedNick;
+                }
+            }
 
             // Get rank prefix if available
             String rankPrefix = "";

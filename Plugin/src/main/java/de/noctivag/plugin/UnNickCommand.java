@@ -33,6 +33,7 @@ public class UnNickCommand implements CommandExecutor {
         }
 
         playerDataManager.removeNickname(player.getName());
+        playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
         player.sendMessage(Component.text("Dein Nickname wurde entfernt.").color(NamedTextColor.GREEN));
         return true;

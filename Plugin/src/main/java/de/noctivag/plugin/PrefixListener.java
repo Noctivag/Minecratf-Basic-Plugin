@@ -2,6 +2,7 @@ package de.noctivag.plugin;
 
 import de.noctivag.plugin.permissions.Rank;
 import de.noctivag.plugin.permissions.RankManager;
+import de.noctivag.plugin.data.PlayerDataManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import io.papermc.paper.chat.ChatRenderer;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -10,24 +11,28 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-
 public class PrefixListener implements Listener {
-    private final HashMap<String, String> prefixMap;
-    private final HashMap<String, String> nickMap;
     private final Plugin plugin;
+    private final PlayerDataManager playerDataManager;
 
-    public PrefixListener(Plugin plugin, HashMap<String, String> prefixMap, HashMap<String, String> nickMap) {
+    public PrefixListener(Plugin plugin, PlayerDataManager playerDataManager) {
         this.plugin = plugin;
-        this.prefixMap = prefixMap;
-        this.nickMap = nickMap;
+        this.playerDataManager = playerDataManager;
     }
 
     @EventHandler
     public void onPlayerChat(@NotNull AsyncChatEvent event) {
         String playerName = event.getPlayer().getName();
-        String customPrefix = prefixMap.getOrDefault(playerName, "");
-        String nick = nickMap.getOrDefault(playerName, event.getPlayer().getName());
+        String storedPrefix = null;
+        String storedNick = null;
+
+        if (playerDataManager != null) {
+            storedPrefix = playerDataManager.getPrefix(playerName);
+            storedNick = playerDataManager.getNickname(playerName);
+        }
+
+        final String customPrefix = storedPrefix != null ? storedPrefix : "";
+        final String nick = (storedNick != null && !storedNick.isEmpty()) ? storedNick : event.getPlayer().getName();
 
         // Get rank prefix if available
         String rankPrefix = "";

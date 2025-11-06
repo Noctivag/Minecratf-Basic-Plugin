@@ -7,12 +7,12 @@ import de.noctivag.plugin.tabcomplete.GlobalTabCompleter;
 import de.noctivag.plugin.data.DataManager;
 import de.noctivag.plugin.messages.MessageManager;
 import de.noctivag.plugin.managers.SitManager;
+import de.noctivag.plugin.managers.SleepManager;
 import de.noctivag.plugin.managers.TabListManager;
 import de.noctivag.plugin.managers.NametagManager;
 import de.noctivag.plugin.managers.HomeManager;
 import de.noctivag.plugin.managers.WarpManager;
 import de.noctivag.plugin.permissions.RankManager;
-import de.noctivag.plugin.utils.ScheduleManager;
 import de.noctivag.plugin.commands.TriggerSitCommand;
 import de.noctivag.plugin.commands.TriggerCamCommand;
 import de.noctivag.plugin.commands.VanishCommand;
@@ -26,19 +26,18 @@ import de.noctivag.plugin.commands.teleport.TeleportCommands;
 import de.noctivag.plugin.commands.admin.AdminCommands;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.util.HashMap;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import de.noctivag.plugin.tabcomplete.JoinMessageTabCompleter;
 
 public final class Plugin extends JavaPlugin {
-    private final HashMap<String, String> prefixMap = new HashMap<>();
-    private final HashMap<String, String> nickMap = new HashMap<>();
     private ConfigManager configManager;
     private JoinMessageManager joinMessageManager;
     private DataManager dataManager;
     private PlayerDataManager playerDataManager;
     private MessageManager messageManager;
-    private ScheduleManager scheduleManager;
     private SitManager sitManager;
+    private SleepManager sleepManager;
     private TabListManager tabListManager;
     private NametagManager nametagManager;
     private TriggerCamCommand triggerCamCommand;
@@ -57,8 +56,8 @@ public final class Plugin extends JavaPlugin {
             this.playerDataManager = new PlayerDataManager(this);
             this.messageManager = new MessageManager(this);
             this.joinMessageManager = new JoinMessageManager(this);
-            this.scheduleManager = new ScheduleManager(this);
             this.sitManager = new SitManager(this);
+            this.sleepManager = new SleepManager(this);
             this.tabListManager = new TabListManager(this);
             this.nametagManager = new NametagManager(this);
             this.triggerCamCommand = new TriggerCamCommand();
@@ -74,14 +73,11 @@ public final class Plugin extends JavaPlugin {
 
             dataManager.loadData();
             joinMessageManager.reload();
-            
-            // Lade Spielerdaten in HashMaps für Kompatibilität
-            prefixMap.putAll(playerDataManager.getAllPrefixes());
-            nickMap.putAll(playerDataManager.getAllNicknames());
 
             registerCommands();
             registerTabCompleters();
             registerListeners();
+            refreshNametagsForOnlinePlayers();
             
             // Starte TabList Updater
             tabListManager.startTabListUpdater();
@@ -96,9 +92,10 @@ public final class Plugin extends JavaPlugin {
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-        getServer().getPluginManager().registerEvents(new TabListListener(this, prefixMap, nickMap, joinMessageManager), this);
-        getServer().getPluginManager().registerEvents(new PrefixListener(this, prefixMap, nickMap), this);
+        getServer().getPluginManager().registerEvents(new TabListListener(this, playerDataManager, joinMessageManager), this);
+        getServer().getPluginManager().registerEvents(new PrefixListener(this, playerDataManager), this);
         getServer().getPluginManager().registerEvents(new de.noctivag.plugin.listeners.CameraListener(this, triggerCamCommand), this);
+        getServer().getPluginManager().registerEvents(sleepManager, this); // Sleep-System
     }
 
     private void registerTabCompleters() {
@@ -341,14 +338,6 @@ public final class Plugin extends JavaPlugin {
         return configManager;
     }
 
-    public HashMap<String, String> getPrefixMap() {
-        return prefixMap;
-    }
-
-    public HashMap<String, String> getNickMap() {
-        return nickMap;
-    }
-
     public JoinMessageManager getJoinMessageManager() {
         return joinMessageManager;
     }
@@ -359,10 +348,6 @@ public final class Plugin extends JavaPlugin {
 
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
-    }
-
-    public ScheduleManager getScheduleManager() {
-        return scheduleManager;
     }
 
     public SitManager getSitManager() {
@@ -395,5 +380,15 @@ public final class Plugin extends JavaPlugin {
 
     public SpawnCommand getSpawnCommand() {
         return spawnCommand;
+    }
+
+    private void refreshNametagsForOnlinePlayers() {
+        if (nametagManager == null) {
+            return;
+        }
+
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            nametagManager.loadNametag(onlinePlayer);
+        }
     }
 }

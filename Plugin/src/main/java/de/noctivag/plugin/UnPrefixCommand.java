@@ -32,6 +32,7 @@ public class UnPrefixCommand implements CommandExecutor {
         }
 
         playerDataManager.removePrefix(player.getName());
+        playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
         player.sendMessage(Component.text("Dein Prefix wurde entfernt.").color(NamedTextColor.GREEN));
         return true;

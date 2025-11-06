@@ -52,6 +52,7 @@ public class PrefixCommand implements CommandExecutor {
 
         String prefix = String.join(" ", args);
         playerDataManager.setPrefix(player.getName(), prefix);
+        playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
 
         player.sendMessage(Component.text("Dein Prefix wurde gesetzt zu: ").color(NamedTextColor.GREEN)

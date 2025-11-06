@@ -12,7 +12,6 @@ de/noctivag/plugin/permissions/Rank.class
 de/noctivag/plugin/data/DataManager.class
 de/noctivag/plugin/utils/ColorUtils.class
 de/noctivag/plugin/managers/TabListManager.class
-de/noctivag/plugin/utils/ScheduleManager.class
 de/noctivag/plugin/PrefixListener.class
 de/noctivag/plugin/database/DatabaseProvider.class
 de/noctivag/plugin/commands/TriggerSitCommand.class

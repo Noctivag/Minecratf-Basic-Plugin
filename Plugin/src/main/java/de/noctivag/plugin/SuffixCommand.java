@@ -52,6 +52,7 @@ public class SuffixCommand implements CommandExecutor {
 
         String suffix = String.join(" ", args);
         playerDataManager.setSuffix(player.getName(), suffix);
+        playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
 
         player.sendMessage(Component.text("Dein Suffix wurde gesetzt zu: ").color(NamedTextColor.GREEN)

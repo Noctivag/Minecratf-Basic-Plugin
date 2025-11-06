@@ -46,7 +46,7 @@ camera:
 
 # Sleep-System Einstellungen
 sleep:
-  percentage: 0.3  # Prozentsatz der Spieler die schlafen müssen (0.3 = 30%)
+  percentage: 0.01  # Prozentsatz der Spieler die schlafen müssen (0.01 = 1%, mindestens 1 Spieler)
 
 # Command-Einstellungen
 commands:

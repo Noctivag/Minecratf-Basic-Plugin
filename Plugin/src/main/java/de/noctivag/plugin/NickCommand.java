@@ -52,6 +52,7 @@ public class NickCommand implements CommandExecutor {
 
         String nick = String.join(" ", args);
         playerDataManager.setNickname(player.getName(), nick);
+        playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
 
         player.sendMessage(Component.text("Dein Nickname wurde gesetzt zu: ").color(NamedTextColor.GREEN)
