@@ -25,15 +25,16 @@ public class RankManager {
         this.ranks = new ConcurrentHashMap<>();
         this.playerRanks = new ConcurrentHashMap<>();
         
-        // Detect BungeeCord environment
-        this.isBungeeCord = detectBungeeCord();
+        // Check if BungeeCord mode is enabled in config (default: false)
+        boolean bungeeCordEnabled = plugin.getConfig().getBoolean("database.bungeecord-mode", false);
+        this.isBungeeCord = bungeeCordEnabled && detectBungeeCord();
         
         // Initialize appropriate database provider
         if (isBungeeCord) {
-            plugin.getLogger().info("BungeeCord detected! Using MySQL for network-wide rank synchronization");
+            plugin.getLogger().info("BungeeCord mode enabled! Using MySQL for network-wide rank synchronization");
             this.database = createMySQLProvider();
         } else {
-            plugin.getLogger().info("Standalone mode detected! Using SQLite for local storage");
+            plugin.getLogger().info("Using SQLite for local storage");
             this.database = new SQLiteProvider(plugin);
         }
         

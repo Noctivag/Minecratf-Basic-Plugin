@@ -8,9 +8,10 @@ settings:
   check-player-exists: true # Prüft ob Spieler existiert bei /joinmessage set
 
 # Database Settings for BungeeCord Network Mode
-# The plugin will automatically detect if it's running on a BungeeCord network
-# If BungeeCord is detected, it will use MySQL; otherwise, it will use SQLite
+# Set bungeecord-mode to true to enable MySQL for network-wide data synchronization
+# When disabled (default), the plugin uses SQLite for local storage
 database:
+  bungeecord-mode: false  # Enable BungeeCord/network mode (uses MySQL instead of SQLite)
   mysql:
     host: localhost
     port: 3306
