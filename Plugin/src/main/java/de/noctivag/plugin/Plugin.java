@@ -83,6 +83,7 @@ public final class Plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new TabListListener(this, prefixMap, nickMap, joinMessageManager), this);
         getServer().getPluginManager().registerEvents(new GUIListener(this, particleManager), this);
+        getServer().getPluginManager().registerEvents(new PrefixListener(this, prefixMap, nickMap), this);
     }
 
     private void registerTabCompleters() {
