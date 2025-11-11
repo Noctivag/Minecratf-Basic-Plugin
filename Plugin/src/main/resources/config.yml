@@ -1,74 +1,285 @@
-# Plugin Hauptkonfiguration
+# =====================================
+# Plugin Advanced Configuration
+# =====================================
+# This configuration allows you to enable/disable and configure every aspect of the plugin
+# Set 'enabled: false' on any module to completely disable it
 
-# Allgemeine Einstellungen
+# =====================================
+# General Settings
+# =====================================
 settings:
   language: de_DE
-  auto-save-interval: 300 # Sekunden
+  auto-save-interval: 300 # Auto-save player data every X seconds (0 = disabled)
   debug-mode: false
-  check-player-exists: true # Prüft ob Spieler existiert bei /joinmessage set
+  check-player-exists: true # Check if player exists for /joinmessage set
 
-# Database Settings for BungeeCord Network Mode
-# Set bungeecord-mode to true to enable MySQL for network-wide data synchronization
-# When disabled (default), the plugin uses SQLite for local storage
+# =====================================
+# Integration Settings
+# =====================================
+integrations:
+  # LuckPerms Integration - Use LuckPerms for permissions instead of built-in rank system
+  luckperms:
+    enabled: false # Set to true if you have LuckPerms installed
+    use-for-permissions: true # Use LuckPerms permissions instead of built-in system
+    sync-display-names: true # Sync prefix/suffix from LuckPerms
+    primary-group-only: true # Only use primary group for prefix/suffix
+
+  # PlaceholderAPI Integration - Provides placeholders for other plugins
+  placeholderapi:
+    enabled: false # Set to true if you have PlaceholderAPI installed
+    register-expansions: true # Register plugin placeholders
+
+# =====================================
+# Database Settings
+# =====================================
+# Choose between SQLite (local) or MySQL (network-wide)
 database:
-  bungeecord-mode: false  # Enable BungeeCord/network mode (uses MySQL instead of SQLite)
+  bungeecord-mode: false  # Enable for BungeeCord/network mode (uses MySQL)
   mysql:
     host: localhost
     port: 3306
     database: minecraft_ranks
     username: root
     password: password
-    # Connection pool settings
     max-pool-size: 10
     min-idle: 2
+    connection-timeout: 30000 # milliseconds
+    max-lifetime: 1800000 # 30 minutes
 
-# Join-Message Einstellungen
-join-messages:
-  default-message: "&7[&a+&7] &e%player% &7hat den Server betreten"
-  format:
-    prefix: "&8[&6Server&8] "
+# =====================================
+# Module System - Enable/Disable Features
+# =====================================
+modules:
+  # Rank System
+  ranks:
+    enabled: true
+    use-builtin-system: true # Use built-in rank system (disable if using LuckPerms only)
+    default-rank: default
+    permission-based: false # Use permission nodes instead of database ranks
+
+  # Nametag/Scoreboard System
+  nametags:
+    enabled: true
+    update-method: individual # individual = better performance, all = legacy method
+    update-on-join: true
+    update-on-rank-change: true
+
+  # Tab List Customization
+  tablist:
+    enabled: true
+    update-interval: 20 # ticks (20 = 1 second)
+    show-prefix: true
+    show-suffix: true
+
+  # Custom Prefixes/Suffixes
+  prefixes:
+    enabled: true
     allow-colors: true
-    max-length: 100
-  examples:
-    - "&7[&a+&7] &e%player%"
-    - "&8[&6★&8] &6%player%"
-    - "&#FF0000[VIP] &e%player%"
-    - "<gradient:#FF0000:#00FF00>%player%</gradient>"
-    - "<rainbow>%player%</rainbow>"
+    max-length: 32
+    override-rank-prefix: true # Custom prefix overrides rank prefix
 
-# Quit-Message Einstellungen
-quit-messages:
-  default-message: "&7[&c-&7] &e%player% &7hat den Server verlassen"
+  suffixes:
+    enabled: true
+    allow-colors: true
+    max-length: 32
+    override-rank-suffix: true
 
-# Kamera-Modus Einstellungen
-camera:
-  max-distance: 300  # Maximale Entfernung vom Startpunkt in Blöcken
-
-# Sleep-System Einstellungen
-sleep:
-  percentage: 0.01  # Prozentsatz der Spieler die schlafen müssen (0.01 = 1%, mindestens 1 Spieler)
-
-# Command-Einstellungen
-commands:
-  heal:
-    cooldown: 300 # 5 Minuten
-    cost: 100 # Economy-Kosten
-  nick:
+  # Nicknames
+  nicknames:
+    enabled: true
     min-length: 3
     max-length: 16
     allow-colors: true
+    allow-duplicates: false
     blocked-names:
       - Admin
       - Owner
       - Staff
-  home:
-    max-homes: 5 # Maximum number of homes per player
-  teleport:
-    request-timeout: 60 # Teleport request timeout in seconds
+      - Moderator
 
-# Nachrichten-Einstellungen
+  # Join/Quit Messages
+  join-messages:
+    enabled: true
+    custom-messages: true # Allow players to set custom join messages
+    default-message: "&7[&a+&7] &e%player% &7hat den Server betreten"
+    allow-colors: true
+    max-length: 100
+    examples:
+      - "&7[&a+&7] &e%player%"
+      - "&8[&6★&8] &6%player%"
+      - "&#FF0000[VIP] &e%player%"
+      - "<gradient:#FF0000:#00FF00>%player%</gradient>"
+      - "<rainbow>%player%</rainbow>"
+
+  quit-messages:
+    enabled: true
+    default-message: "&7[&c-&7] &e%player% &7hat den Server verlassen"
+
+  # Home System
+  homes:
+    enabled: true
+    max-homes: 5
+    max-homes-vip: 10 # Requires permission: essentials.home.vip
+    teleport-delay: 3 # seconds (0 = instant, bypassed with permission)
+    cancel-on-move: true
+
+  # Warp System
+  warps:
+    enabled: true
+    teleport-delay: 0 # seconds
+    cancel-on-move: false
+    per-warp-permissions: false # Require permission: essentials.warp.<warpname>
+
+  # Spawn System
+  spawn:
+    enabled: true
+    teleport-on-join: false
+    teleport-on-death: false
+    teleport-delay: 3 # seconds
+
+  # Teleportation Commands
+  teleportation:
+    enabled: true
+    request-timeout: 60 # seconds
+    teleport-delay: 3 # seconds for /tpa
+    cancel-on-move: true
+    max-distance: 0 # 0 = unlimited
+
+  # Workbench Access Commands
+  workbenches:
+    enabled: true
+    craftingtable: true
+    anvil: true
+    enderchest: true
+    grindstone: true
+    smithingtable: true
+    stonecutter: true
+    loom: true
+    cartography: true
+
+  # Cosmetic Features
+  cosmetics:
+    enabled: true
+
+    sit:
+      enabled: true
+      allow-on-stairs: true
+      allow-on-slabs: true
+
+    camera:
+      enabled: true
+      max-distance: 300
+      spectator-effects: true
+      restore-on-damage: true
+      restore-on-disconnect: true
+
+    vanish:
+      enabled: true
+      hide-from-tablist: false
+      silent-join-quit: true
+      night-vision: true
+
+  # Basic Commands
+  basic-commands:
+    enabled: true
+
+    heal:
+      enabled: true
+      cooldown: 300 # seconds (0 = no cooldown)
+      cooldown-bypass-permission: basiccommands.heal.nocooldown
+
+    feed:
+      enabled: true
+      cooldown: 300
+      cooldown-bypass-permission: basiccommands.feed.nocooldown
+
+    fly:
+      enabled: true
+      enable-on-join: false # Remember fly state
+      disable-on-damage: false
+
+    clearinventory:
+      enabled: true
+      confirm-required: true
+
+  # Gamemode Commands
+  gamemode:
+    enabled: true
+    creative: true
+    survival: true
+    spectator: true
+
+  # Admin Commands
+  admin-commands:
+    enabled: true
+
+    kick:
+      enabled: true
+      broadcast: true
+
+    invsee:
+      enabled: true
+      allow-modify: true
+
+    time:
+      enabled: true
+      day: true
+      night: true
+
+    weather:
+      enabled: true
+      sun: true
+      rain: true
+
+  # Sleep System
+  sleep:
+    enabled: true
+    percentage: 0.01 # 1% of players need to sleep
+    min-players: 1
+
+# =====================================
+# Cooldown System
+# =====================================
+cooldowns:
+  enabled: true
+  persist-on-restart: true # Save cooldowns to disk
+  bypass-permission: plugin.cooldown.bypass
+
+  # Per-command cooldowns (seconds)
+  commands:
+    heal: 300
+    feed: 300
+    home: 5
+    warp: 5
+    spawn: 10
+    tpa: 30
+
+# =====================================
+# Chat Integration
+# =====================================
+chat:
+  enabled: true
+  format: "%prefix%%player%%suffix%&7: &f%message%"
+  use-display-name: true # Use nickname in chat
+  color-permission: plugin.chat.color # Permission to use color codes
+
+# =====================================
+# Performance Settings
+# =====================================
+performance:
+  async-database-operations: true
+  batch-nametag-updates: true
+  cache-player-data: true
+  cache-duration: 300 # seconds
+
+# =====================================
+# Messages
+# =====================================
 messages:
   prefix: "&8[&6Server&8] "
-  join-message: "&7[&a+&7] &e%player%"
-  quit-message: "&7[&c-&7] &e%player%"
   no-permission: "&cDu hast keine Berechtigung für diese Aktion!"
+  module-disabled: "&cDiese Funktion ist derzeit deaktiviert!"
+  cooldown: "&cBitte warte noch %time% Sekunden!"
+  player-not-found: "&cSpieler nicht gefunden!"
+  teleporting: "&aTeleporation in %time% Sekunden..."
+  teleport-cancelled: "&cTeleportation abgebrochen!"
