@@ -35,13 +35,22 @@ public class NametagManager {
      * Aktualisiert den Nametag eines Spielers
      */
     public void updateNametag(Player player) {
-        String prefix = playerDataManager.getPrefix(player.getName());
-        String suffix = playerDataManager.getSuffix(player.getName());
-        String nick = playerDataManager.getNickname(player.getName());
-        
+        String prefix = playerDataManager.getPrefix(player.getUniqueId());
+        String suffix = playerDataManager.getSuffix(player.getUniqueId());
+        String nick = playerDataManager.getNickname(player.getUniqueId());
+
+        // Check if LuckPerms integration should override
+        if (plugin.getLuckPermsHook() != null && plugin.getLuckPermsHook().shouldSyncDisplayNames()) {
+            String lpPrefix = plugin.getLuckPermsHook().getPrefix(player);
+            String lpSuffix = plugin.getLuckPermsHook().getSuffix(player);
+
+            if (lpPrefix != null) prefix = lpPrefix;
+            if (lpSuffix != null) suffix = lpSuffix;
+        }
+
         // Hole oder erstelle Team für den Spieler
         Team team = getOrCreateTeam(player);
-        
+
         // Setze Prefix (max 64 Zeichen für Legacy-Format)
         if (prefix != null && !prefix.isEmpty()) {
             Component prefixComponent = ColorUtils.parseColor(prefix);
@@ -49,7 +58,7 @@ public class NametagManager {
         } else {
             team.prefix(Component.empty());
         }
-        
+
         // Setze Suffix (max 64 Zeichen für Legacy-Format)
         if (suffix != null && !suffix.isEmpty()) {
             Component suffixComponent = ColorUtils.parseColor(suffix);
@@ -57,33 +66,46 @@ public class NametagManager {
         } else {
             team.suffix(Component.empty());
         }
-        
+
         // Aktualisiere Display-Name und PlayerList-Name
         updateDisplayName(player);
-        
-        // Aktualisiere Scoreboard für ALLE Online-Spieler
-        updateScoreboardForAll(player);
+
+        // PERFORMANCE FIX: Only update the player's own scoreboard if needed
+        // All players already see the main scoreboard, no need to reset it for everyone
+        if (player.getScoreboard() != scoreboard) {
+            player.setScoreboard(scoreboard);
+        }
     }
 
     /**
      * Aktualisiert den Display-Namen eines Spielers
      */
     private void updateDisplayName(Player player) {
-        String prefix = playerDataManager.getPrefix(player.getName());
-        String suffix = playerDataManager.getSuffix(player.getName());
-        String nick = playerDataManager.getNickname(player.getName());
+        String prefix = playerDataManager.getPrefix(player.getUniqueId());
+        String suffix = playerDataManager.getSuffix(player.getUniqueId());
+        String nick = playerDataManager.getNickname(player.getUniqueId());
+
+        // Check if LuckPerms integration should override
+        if (plugin.getLuckPermsHook() != null && plugin.getLuckPermsHook().shouldSyncDisplayNames()) {
+            String lpPrefix = plugin.getLuckPermsHook().getPrefix(player);
+            String lpSuffix = plugin.getLuckPermsHook().getSuffix(player);
+
+            if (lpPrefix != null) prefix = lpPrefix;
+            if (lpSuffix != null) suffix = lpSuffix;
+        }
+
         String displayText = nick != null ? nick : player.getName();
 
         Component displayName = Component.empty();
-        
+
         // Prefix
         if (prefix != null && !prefix.isEmpty()) {
             displayName = displayName.append(ColorUtils.parseColor(prefix)).append(Component.space());
         }
-        
+
         // Name/Nick
         displayName = displayName.append(ColorUtils.parseColor(displayText));
-        
+
         // Suffix
         if (suffix != null && !suffix.isEmpty()) {
             displayName = displayName.append(Component.space()).append(ColorUtils.parseColor(suffix));
@@ -136,14 +158,16 @@ public class NametagManager {
     }
 
     /**
-     * Aktualisiert das Scoreboard für alle Spieler
-     * Damit die Änderungen sofort für alle sichtbar sind
+     * DEPRECATED: This method is no longer needed as all players automatically see
+     * the main scoreboard updates. Kept for backwards compatibility but does nothing.
+     *
+     * @deprecated Use individual scoreboard updates instead for better performance
      */
+    @Deprecated
     private void updateScoreboardForAll(Player changedPlayer) {
-        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-            // Setze das Main-Scoreboard für jeden Spieler neu
-            onlinePlayer.setScoreboard(scoreboard);
-        }
+        // This method has been removed for performance reasons
+        // All players already see the main scoreboard, no need to reset it
+        // Individual updates in updateNametag() are sufficient
     }
 
     /**

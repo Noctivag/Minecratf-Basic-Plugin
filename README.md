@@ -1,6 +1,44 @@
-# Minecraft Basic Plugin - Enhanced Edition
+# Minecraft Advanced Plugin - Next Level Edition
 
-A comprehensive all-in-one Minecraft server plugin with rank/permission system and essential server functionality.
+An advanced, modular all-in-one Minecraft server plugin with extensive features, external plugin integration (LuckPerms, PlaceholderAPI), and complete module control.
+
+## 🌟 What's New in Next Level Edition
+
+### 🔌 External Plugin Compatibility
+- **LuckPerms Integration**: Full prefix/suffix sync and permission system integration
+- **PlaceholderAPI Integration**: Complete placeholder expansion for compatibility with other plugins
+- **Soft Dependencies**: Works seamlessly with or without external plugins
+
+### ⚙️ Complete Module System
+- **Every feature can be individually enabled/disabled** via config.yml
+- Fine-grained control over all functionality
+- Disable what you don't need for better performance
+- Module status checking in all commands
+
+### ⏱️ Advanced Cooldown System
+- Per-command configurable cooldowns
+- Persistent across server restarts
+- Bypass permissions available
+- Automatic cleanup of expired cooldowns
+
+### 💾 Auto-Save System
+- Configurable automatic saving intervals
+- Saves player data, homes, warps, and cooldowns
+- Async operation for zero lag
+- Debug logging for monitoring
+
+### 🎨 Enhanced Chat System
+- Full chat formatting with prefixes/suffixes
+- LuckPerms prefix/suffix sync in chat
+- Color permission system
+- Nickname support in chat messages
+
+### 🚀 Performance Optimizations
+- **Fixed critical nametag performance issue** (no longer updates all players)
+- Async database operations
+- Batch nametag updates
+- Player data caching
+- HikariCP connection pooling for MySQL
 
 ## Features
 
@@ -238,12 +276,85 @@ The plugin automatically determines which database to use:
 6. Start/restart all servers
 7. Plugin will automatically create MySQL tables and sync ranks across the network
 
+## Configuration Examples
+
+### Enabling LuckPerms Integration
+```yaml
+integrations:
+  luckperms:
+    enabled: true  # Enable LuckPerms integration
+    use-for-permissions: true  # Use LuckPerms for permission checks
+    sync-display-names: true  # Sync prefix/suffix from LuckPerms
+    primary-group-only: true  # Only use primary group
+```
+
+### Enabling PlaceholderAPI
+```yaml
+integrations:
+  placeholderapi:
+    enabled: true  # Enable PlaceholderAPI integration
+    register-expansions: true  # Register plugin placeholders
+```
+
+### Configuring Cooldowns
+```yaml
+cooldowns:
+  enabled: true
+  persist-on-restart: true  # Save cooldowns across restarts
+  bypass-permission: plugin.cooldown.bypass
+  commands:
+    heal: 300  # 5 minutes
+    feed: 300
+    home: 5
+    warp: 5
+    spawn: 10
+    tpa: 30
+```
+
+### Disabling Unwanted Modules
+```yaml
+modules:
+  # Disable cosmetic features
+  cosmetics:
+    enabled: false  # Disables sit, camera, vanish
+
+  # Or disable specific features
+  cosmetics:
+    enabled: true
+    sit:
+      enabled: false  # Only disable sit
+    camera:
+      enabled: true
+    vanish:
+      enabled: true
+
+  # Disable entire command groups
+  workbenches:
+    enabled: false  # Disables all workbench commands
+```
+
+## Available Placeholders (PlaceholderAPI)
+
+When PlaceholderAPI is enabled:
+- `%noctivagplugin_prefix%` - Player's custom prefix
+- `%noctivagplugin_suffix%` - Player's custom suffix
+- `%noctivagplugin_nickname%` - Player's nickname or real name
+- `%noctivagplugin_displayname%` - Full display with prefix + name + suffix
+- `%noctivagplugin_rank%` - Player's rank name
+- `%noctivagplugin_rank_prefix%` - Rank's prefix
+- `%noctivagplugin_rank_suffix%` - Rank's suffix
+- `%noctivagplugin_homes_count%` - Number of homes set
+- `%noctivagplugin_homes_max%` - Maximum homes allowed
+- `%noctivagplugin_flying%` - Flight status (true/false)
+
 ## Requirements
 
-- Minecraft 1.21+
-- Paper/Spigot server
+- Minecraft 1.21.8+
+- Paper or Spigot server
 - Java 21+
 - **For BungeeCord mode**: MySQL 5.7+ or MariaDB 10.2+
+- **Optional**: LuckPerms 5.4+ for permission integration
+- **Optional**: PlaceholderAPI 2.11.6+ for placeholder support
 
 ## Building from Source
 
@@ -268,4 +379,18 @@ This plugin is provided as-is for use on Minecraft servers.
 
 ---
 
-**Note**: This is an enhanced version of the original basic plugin, now featuring a complete rank system and essential server commands similar to LuckPerms and EssentialsX.
+## 🎯 Next Level Features Summary
+
+This "Next Level" edition includes:
+
+✅ **Full LuckPerms Integration** - Use LuckPerms for all permissions and prefixes
+✅ **PlaceholderAPI Support** - Compatible with all PAPI-dependent plugins
+✅ **Complete Module System** - Enable/disable any feature
+✅ **Advanced Cooldown System** - Persistent, configurable, bypassable
+✅ **Auto-Save System** - Never lose data
+✅ **Performance Fixed** - Critical nametag lag issue resolved
+✅ **Chat Integration** - Full chat formatting with external plugin support
+✅ **Developer API** - Easy integration for other plugins
+✅ **100% Configurable** - Every aspect can be customized
+
+**This is a professional-grade, production-ready plugin suitable for large servers and networks.**

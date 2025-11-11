@@ -2,6 +2,10 @@ name: Plugin
 version: '1.0-SNAPSHOT'
 main: de.noctivag.plugin.Plugin
 api-version: '1.21'
+softdepend: [LuckPerms, PlaceholderAPI]
+authors: [Noctivag]
+description: Advanced all-in-one Minecraft plugin with modular features
+website: https://github.com/Noctivag/Minecratf-Basic-Plugin
 commands:
   prefix:
     description: Setzt deinen Chat-Prefix
