@@ -10,25 +10,28 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
+import de.noctivag.plugin.messages.MessageManager;
 
 public class PrefixListener implements Listener {
     private final Plugin plugin;
     private final PlayerDataManager playerDataManager;
+    private final MessageManager messageManager;
 
     public PrefixListener(Plugin plugin, PlayerDataManager playerDataManager) {
         this.plugin = plugin;
         this.playerDataManager = playerDataManager;
+        this.messageManager = plugin.getMessageManager();
     }
 
     @EventHandler
     public void onPlayerChat(@NotNull AsyncChatEvent event) {
-        String playerName = event.getPlayer().getName();
+        String playerUuid = event.getPlayer().getUniqueId().toString();
         String storedPrefix = null;
         String storedNick = null;
 
         if (playerDataManager != null) {
-            storedPrefix = playerDataManager.getPrefix(playerName);
-            storedNick = playerDataManager.getNickname(playerName);
+            storedPrefix = playerDataManager.getPrefix(playerUuid);
+            storedNick = playerDataManager.getNickname(playerUuid);
         }
 
         final String customPrefix = storedPrefix != null ? storedPrefix : "";
@@ -52,7 +55,7 @@ public class PrefixListener implements Listener {
                 .append(ColorUtils.parseColor(finalPrefix))
                 .append(Component.space())
                 .append(ColorUtils.parseColor(nick))
-                .append(Component.text(": "))
+                .append(messageManager.getMessage("chat.separator"))
                 .append(message)
         ));
     }

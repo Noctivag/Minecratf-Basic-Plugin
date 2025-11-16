@@ -1,8 +1,10 @@
 package de.noctivag.plugin.commands.teleport;
 
+import de.noctivag.plugin.managers.TeleportWarmupManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,11 +21,13 @@ public class TeleportCommands implements CommandExecutor {
     private final Map<UUID, Long> requestExpiry;
     private final long requestTimeout; // Configurable timeout
     private static final int MILLIS_PER_SECOND = 1000;
+    private final TeleportWarmupManager warmupManager;
 
-    public TeleportCommands(JavaPlugin plugin) {
+    public TeleportCommands(JavaPlugin plugin, TeleportWarmupManager warmupManager) {
         this.teleportRequests = new ConcurrentHashMap<>();
         this.requestExpiry = new ConcurrentHashMap<>();
-        this.requestTimeout = plugin.getConfig().getLong("commands.teleport.request-timeout", 60) * MILLIS_PER_SECOND;
+        this.requestTimeout = plugin.getConfig().getLong("modules.teleportation.request-timeout", 60) * MILLIS_PER_SECOND;
+        this.warmupManager = warmupManager;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class TeleportCommands implements CommandExecutor {
     }
 
     private void handleTp(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("essentials.tp")) {
+        if (!sender.hasPermission("plugin.teleport")) {
             sender.sendMessage(Component.text("You don't have permission!").color(NamedTextColor.RED));
             return;
         }
@@ -63,12 +67,13 @@ public class TeleportCommands implements CommandExecutor {
             return;
         }
 
-        player.teleport(target);
-        sender.sendMessage(Component.text("Teleported to " + target.getName()).color(NamedTextColor.GREEN));
+        Location targetLoc = target.getLocation().clone();
+        warmupManager.startTeleport(player, () -> targetLoc);
+        sender.sendMessage(Component.text("Teleport request started to " + target.getName()).color(NamedTextColor.GREEN));
     }
 
     private void handleTpa(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("essentials.tpa")) {
+        if (!sender.hasPermission("plugin.teleport")) {
             sender.sendMessage(Component.text("You don't have permission!").color(NamedTextColor.RED));
             return;
         }
@@ -102,7 +107,7 @@ public class TeleportCommands implements CommandExecutor {
     }
 
     private void handleTphere(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("essentials.tphere")) {
+        if (!sender.hasPermission("plugin.teleport")) {
             sender.sendMessage(Component.text("You don't have permission!").color(NamedTextColor.RED));
             return;
         }
@@ -123,13 +128,14 @@ public class TeleportCommands implements CommandExecutor {
             return;
         }
 
-        target.teleport(player);
-        sender.sendMessage(Component.text(target.getName() + " teleported to you").color(NamedTextColor.GREEN));
-        target.sendMessage(Component.text("Teleported to " + player.getName()).color(NamedTextColor.GREEN));
+        Location here = player.getLocation().clone();
+        warmupManager.startTeleport(target, () -> here);
+        sender.sendMessage(Component.text("Teleporting " + target.getName() + " to you...").color(NamedTextColor.GREEN));
+        target.sendMessage(Component.text("Teleportation to " + player.getName() + " started...").color(NamedTextColor.GREEN));
     }
 
     private void handleTpAccept(CommandSender sender) {
-        if (!sender.hasPermission("essentials.tpaccept")) {
+        if (!sender.hasPermission("plugin.teleport")) {
             sender.sendMessage(Component.text("You don't have permission!").color(NamedTextColor.RED));
             return;
         }
@@ -161,16 +167,17 @@ public class TeleportCommands implements CommandExecutor {
             return;
         }
 
-        requester.teleport(player);
-        sender.sendMessage(Component.text("Teleport request accepted!").color(NamedTextColor.GREEN));
-        requester.sendMessage(Component.text("Teleport request accepted by " + player.getName()).color(NamedTextColor.GREEN));
+        Location acceptorLoc = player.getLocation().clone();
+        warmupManager.startTeleport(requester, () -> acceptorLoc);
+        sender.sendMessage(Component.text("Teleport request accepted! Starting teleport...").color(NamedTextColor.GREEN));
+        requester.sendMessage(Component.text("Teleporting to " + player.getName() + "...").color(NamedTextColor.GREEN));
 
         teleportRequests.remove(player.getUniqueId());
         requestExpiry.remove(player.getUniqueId());
     }
 
     private void handleTpDeny(CommandSender sender) {
-        if (!sender.hasPermission("essentials.tpdeny")) {
+        if (!sender.hasPermission("plugin.teleport")) {
             sender.sendMessage(Component.text("You don't have permission!").color(NamedTextColor.RED));
             return;
         }

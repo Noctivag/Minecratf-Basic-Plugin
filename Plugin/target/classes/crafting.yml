@@ -1,0 +1,55 @@
+# ----------------------------------------------------------------
+# Crafting Recipe Configuration
+# ----------------------------------------------------------------
+#
+# This file allows you to define custom crafting recipes for your server.
+#
+# Each recipe has a unique key (e.g., 'light_block').
+#
+# - enabled: (true/false) Set to false to disable this recipe.
+# - permission: (optional) A permission node required to craft this item.
+# - output: The Material name of the resulting item.
+# - amount: (optional, default: 1) The amount of the resulting item.
+# - display-name: (optional) A custom name for the item.
+# - lore: (optional) A list of strings for the item's lore.
+# - persistent-data: (optional) A custom tag for the item, useful for identifying it later.
+#   - key: The key for the data.
+#   - type: The data type (e.g., 'string', 'integer').
+#   - value: The value to store.
+# - shape: A list of 1 to 3 strings defining the crafting grid shape.
+# - ingredients: A map of characters used in the shape to Material names.
+#
+# ----------------------------------------------------------------
+
+recipes:
+  light_block:
+    enabled: true
+    permission: "plugin.craft.lightblock"
+    output: "LIGHT"
+    amount: 1
+    display-name: "§fLight Block"
+    shape:
+      - "GGG"
+      - "GTG"
+      - "GGG"
+    ingredients:
+      'G': "GLASS"
+      'T': "TORCH"
+
+  invisible_item_frame:
+    enabled: true
+    permission: "plugin.craft.invisibleitemframe"
+    output: "ITEM_FRAME"
+    amount: 1
+    display-name: "§fInvisible Item Frame"
+    persistent-data:
+      key: "invisible-frame"
+      type: "string"
+      value: "true"
+    shape:
+      - "SSS"
+      - "SLS"
+      - "SSS"
+    ingredients:
+      'S': "STICK"
+      'L': "PHANTOM_MEMBRANE"

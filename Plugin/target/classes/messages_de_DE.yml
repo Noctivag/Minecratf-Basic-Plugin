@@ -1,12 +1,89 @@
 # Deutsche Sprachdatei
 prefix:
-  set: "&aDein Prefix wurde zu {0} gesetzt"
+  set: "&aDein Prefix wurde gesetzt zu: "
   remove: "&aDein Prefix wurde entfernt"
   no-permission: "&cDu hast keine Berechtigung dafür"
+  help:
+    - "&6=== Prefix-Hilfe ==="
+    - "&eUnterstützte Formate:"
+    - "&7• Legacy: &f&c[Admin] "
+    - "&7• Hex: &f#FF0000[VIP] oder &#FF0000[VIP]"
+    - "&7• Gradient: &f<gradient:#FF0000:#0000FF>[Admin]</gradient>"
+    - "&7• Rainbow: &f<rainbow>[VIP]</rainbow>"
+    - "&eBeispiele:"
+    - "&f/prefix &c[Admin] "
+    - "&f/prefix <gradient:#FF0000:#00FF00>[VIP]</gradient>"
+    - "&f/prefix <rainbow>[★]</rainbow>"
 
 nickname:
-  set: "&aDein Nickname wurde zu {0} gesetzt"
-  remove: "&aDein Nickname wurde entfernt"
+  set: "Dein Nickname wurde gesetzt zu: "
+  removed: "Dein Nickname wurde entfernt."
+  help:
+    - "§6=== Nickname-Hilfe ==="
+    - "§eUnterstützte Formate:"
+    - "§8• §7Legacy: §f&cSpieler"
+    - "§8• §7Hex: §f#FF0000Spieler oder &#FF0000Spieler"
+    - "§8• §7Gradient: §f<gradient:#FF0000:#0000FF>Spieler</gradient>"
+    - "§8• §7Rainbow: §f<rainbow>Spieler</rainbow>"
+    - "§eBeispiele:"
+    - "§f/nick &bMeinName"
+    - "§f/nick <gradient:#FF0000:#00FF00>MeinName</gradient>"
+    - "§f/nick <rainbow>MeinName</rainbow>"
+  join_message:
+    usage:
+      set: "§cVerwendung: /joinmessage set <Spieler> <Nachricht>"
+      remove: "§cVerwendung: /joinmessage remove <Spieler>"
+      setdefault: "§cVerwendung: /joinmessage setdefault <Nachricht>"
+      toggle: "§cVerwendung: /joinmessage %arg% <Spieler>"
+    reload:
+      no_permission: "§cDafür hast du keine Berechtigung!"
+      success: "§aJoin-Nachrichten neu geladen."
+    error:
+      generic: "§cEin Fehler ist aufgetreten: %error%"
+      player_not_found: "§cSpieler nicht gefunden: %player%"
+    set:
+      success: "§aJoin-Nachricht für %player% wurde gesetzt zu: "
+    remove:
+      success: "§aJoin-Nachricht für %player% wurde entfernt."
+      no_message: "§cFür %player% existiert keine benutzerdefinierte Join-Nachricht."
+    toggle:
+      success: "§7Join-Nachrichten für %player% wurden "
+      enabled_status: "§aaktiviert"
+      disabled_status: "§cdeaktiviert"
+    setdefault:
+      success: "§aStandard Join-Nachricht wurde gesetzt zu: "
+    help:
+      - "§6=== Join-Nachrichten Hilfe ==="
+      - "§e/joinmessage set <Spieler> <Nachricht> - Setzt eine benutzerdefinierte Join-Nachricht"
+      - "§e/joinmessage remove <Spieler> - Entfernt eine benutzerdefinierte Join-Nachricht"
+      - "§e/joinmessage toggle <Spieler> - Schaltet Join-Nachrichten für einen Spieler um"
+      - "§e/joinmessage enable <Spieler> - Aktiviert Join-Nachrichten für einen Spieler"
+      - "§e/joinmessage disable <Spieler> - Deaktiviert Join-Nachrichten für einen Spieler"
+      - "§e/joinmessage setdefault <Nachricht> - Setzt die Standard Join-Nachricht"
+      - "§8Farbcodes: &#RRGGBB für Hex-Farben, & für Standardfarben"
+      - "§8Platzhalter: %player% für den Spielernamen"
+  vanish:
+    visible: "§aDu bist jetzt §lsichtbar§a!"
+    invisible: "§aDu bist jetzt §lunsichtbar§a!"
+    admin_see: "§7Andere Admins können dich weiterhin sehen."
+  invsee:
+    usage: "§cVerwendung: /invsee <Spieler>"
+    player_not_online: "§cDer Spieler §e%player% §cist nicht online!"
+    success: "§aDu siehst jetzt das Inventar von §e%player%§a."
+  sit:
+    already_sitting: "§cDu sitzt bereits."
+    not_sitting: "§cDu sitzt nicht."
+    info: "§eNutze den Befehl erneut, um aufzustehen."
+    stand_up: "§aDu stehst nun auf."
+    sit_down: "§aDu sitzt nun."
+    cant_sit_here: "§cDu kannst dich hier nicht hinsetzen."
+suffix:
+  set: "Dein Suffix wurde auf '§r%suffix%§r' gesetzt."
+  removed: "Dein Suffix wurde entfernt."
+  help:
+    - "§e=== Suffix Hilfe ==="
+    - "§7/suffix <text> - Setzt deinen Suffix."
+    - "§7/unsuffix - Entfernt deinen Suffix."
   no-permission: "&cDu hast keine Berechtigung dafür"
 
 join-message:
@@ -18,8 +95,31 @@ join-message:
   no-custom: "&cFür {0} existiert keine benutzerdefinierte Join-Nachricht"
 
 commands:
-  players-only: "&cNur Spieler können diesen Befehl nutzen"
   wrong-usage: "&cFalsche Verwendung. Nutze: {0}"
+
+error:
+  players_only: "&cNur Spieler können diesen Befehl nutzen."
+  no_permission: "&cDu hast keine Berechtigung dafür."
+  unknown_command: "&cUnbekannter Befehl."
+  generic: "&cEin Fehler ist aufgetreten."
+  unknown_workbench: "&cUnbekannter Werkbank-Typ!"
+  module_disabled: "&cDiese Funktion ist derzeit deaktiviert!"
+  cooldown: "&cBitte warte noch {0} Sekunden!"
+
+basic_commands:
+  heal:
+    success: "&aDu wurdest geheilt!"
+  feed:
+    success: "&aDein Hunger wurde gestillt!"
+  clearinventory:
+    success: "&aDein Inventar wurde geleert!"
+  fly:
+    enabled: "&aFlugmodus aktiviert!"
+    disabled: "&cFlugmodus deaktiviert!"
+  gamemode:
+    creative: "&aSpielmodus auf Kreativ gesetzt!"
+    survival: "&aSpielmodus auf Überleben gesetzt!"
+    spectator: "&aSpielmodus auf Zuschauer gesetzt!"
 
 workbench:
   no-permission: "&cDu hast keine Berechtigung diese Werkbank zu öffnen"
@@ -27,3 +127,91 @@ workbench:
 sleep:
   player-sleeping: "&e%player% &7schläft jetzt. &a%sleeping%&7/&a%required% &7Spieler schlafen (&7%total% &7online&7)"
   night-skipped: "&aGenug Spieler schlafen! Die Nacht wird übersprungen..."
+
+cam:
+  activated: "§aKamera-Modus aktiviert."
+  deactivated: "§cKamera-Modus deaktiviert. Du bist wieder im %s Modus."
+  info: "§eNutze den Befehl erneut, um den Modus zu verlassen."
+  max_distance_info: "§eMaximale Entfernung zum Ausgangspunkt: %s Blöcke."
+  max_distance_reached: "§cMaximale Entfernung von %s Blöcken erreicht."
+  admin:
+    kick:
+      no_permission: "§cDu hast keine Berechtigung, Spieler zu kicken."
+      usage: "§cBenutzung: /kick <Spieler> [Grund]"
+      player_not_found: "§cSpieler nicht gefunden."
+      success: "§aDu hast %s für %s gekickt."
+    invsee:
+      no_permission: "§cDu hast keine Berechtigung, das Inventar von Spielern zu sehen."
+      players_only: "§cNur Spieler können diesen Befehl verwenden."
+      usage: "§cBenutzung: /invsee <Spieler>"
+      player_not_found: "§cSpieler nicht gefunden."
+      success: "§aÖffne das Inventar von %s."
+    time:
+      no_permission: "§cDu hast keine Berechtigung, die Zeit zu ändern."
+      day: "§aZeit auf Tag gesetzt."
+      day_main_world: "§aZeit in der Hauptwelt auf Tag gesetzt."
+      night: "§aZeit auf Nacht gesetzt."
+      night_main_world: "§aZeit in der Hauptwelt auf Nacht gesetzt."
+    weather:
+      no_permission: "§cDu hast keine Berechtigung, das Wetter zu ändern."
+      sun: "§aWetter auf sonnig gesetzt."
+      sun_main_world: "§aWetter in der Hauptwelt auf sonnig gesetzt."
+      rain: "§aWetter auf regnerisch gesetzt."
+      rain_main_world: "§aWetter in der Hauptwelt auf regnerisch gesetzt."
+
+tablist:
+  header:
+    line1: "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    line2: "§6§l  Server Performance  "
+    line3: "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  footer:
+    ram: "§7RAM: {0}{1}{2}{3}"
+    tps: "§7TPS: {0}{1}"
+    mspt: "§7MSPT: {0}{1}"
+    line: "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+crafting:
+  # Hier können die Crafting-Rezepte in der gewünschten Sprache hinzugefügt werden
+sit:
+  already_sitting: "§cDu sitzt bereits."
+  not_sitting: "§cDu sitzt nicht."
+  info: "§eNutze den Befehl erneut, um aufzustehen."
+  stand_up: "§aDu stehst nun auf."
+  sit_down: "§aDu sitzt nun."
+
+chat:
+  separator: ": "
+
+# Neue kosmetische Befehle
+hat:
+  no-item: "&cDu musst einen Gegenstand in der Hand halten, um ihn als Hut zu tragen!"
+  equipped: "&aDu trägst jetzt {0} als Hut!"
+  swapped: "&aDu hast deinen Hut mit dem Gegenstand in deiner Hand getauscht!"
+
+crawl:
+  enabled: "&aDu kriechst jetzt! Bewege dich oder springe, um aufzuhören."
+  disabled: "&aDu hast aufgehört zu kriechen."
+
+
+afk:
+  enabled: "&e{0} &7ist jetzt AFK."
+  disabled: "&e{0} &7ist nicht mehr AFK. &7(Abwesend für: {1})"
+  
+skull:
+  usage: "&cBenutzung: /skull <Spieler>"
+  received: "&aDu hast den Kopf von {0} erhalten!"
+
+ride:
+  usage: "&cBenutzung: /ride <Spieler> oder /ride stop"
+  started: "&aDu reitest jetzt auf {0}!"
+  being-ridden: "&e{0} &7reitet jetzt auf dir!"
+  stopped: "&aDu hast aufgehört zu reiten."
+  not-riding: "&cDu reitest auf nichts!"
+  self: "&cDu kannst nicht auf dir selbst reiten!"
+  failed: "&cReiten fehlgeschlagen! Das Ziel reitet möglicherweise bereits auf etwas."
+
+general:
+  player-only: "&cDieser Befehl kann nur von Spielern verwendet werden!"
+  no-permission: "&cDu hast keine Berechtigung, diesen Befehl zu verwenden!"
+  player-not-found: "&cSpieler nicht gefunden!"
+

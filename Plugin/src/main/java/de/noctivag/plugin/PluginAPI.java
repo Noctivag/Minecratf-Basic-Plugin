@@ -37,7 +37,7 @@ public class PluginAPI {
         NametagManager nametagManager = plugin.getNametagManager();
 
         if (dataManager != null) {
-            dataManager.setPrefix(player.getName(), prefix);
+            dataManager.setPrefix(player.getUniqueId().toString(), prefix);
             dataManager.savePlayerData();
         }
 
@@ -54,7 +54,7 @@ public class PluginAPI {
             return "";
         }
 
-        String storedPrefix = dataManager.getPrefix(player.getName());
+        String storedPrefix = dataManager.getPrefix(player.getUniqueId().toString());
         return storedPrefix != null ? storedPrefix : "";
     }
 
@@ -63,7 +63,7 @@ public class PluginAPI {
         NametagManager nametagManager = plugin.getNametagManager();
 
         if (dataManager != null) {
-            dataManager.removePrefix(player.getName());
+            dataManager.removePrefix(player.getUniqueId().toString());
             dataManager.savePlayerData();
         }
 
@@ -80,7 +80,7 @@ public class PluginAPI {
         NametagManager nametagManager = plugin.getNametagManager();
 
         if (dataManager != null) {
-            dataManager.setNickname(player.getName(), nickname);
+            dataManager.setNickname(player.getUniqueId().toString(), nickname);
             dataManager.savePlayerData();
         }
 
@@ -97,7 +97,7 @@ public class PluginAPI {
             return player.getName();
         }
 
-        String storedNick = dataManager.getNickname(player.getName());
+        String storedNick = dataManager.getNickname(player.getUniqueId().toString());
         return storedNick != null ? storedNick : player.getName();
     }
 
@@ -106,7 +106,7 @@ public class PluginAPI {
         NametagManager nametagManager = plugin.getNametagManager();
 
         if (dataManager != null) {
-            dataManager.removeNickname(player.getName());
+            dataManager.removeNickname(player.getUniqueId().toString());
             dataManager.savePlayerData();
         }
 
@@ -119,15 +119,15 @@ public class PluginAPI {
 
     // Join Message Methoden
     public void setJoinMessage(Player player, String message) {
-        plugin.getJoinMessageManager().setCustomMessage(player.getName(), message);
+        plugin.getJoinMessageManager().setCustomMessage(player.getUniqueId().toString(), message);
     }
 
     public void removeJoinMessage(Player player) {
-        plugin.getJoinMessageManager().removeCustomMessage(player.getName());
+        plugin.getJoinMessageManager().removeCustomMessage(player.getUniqueId().toString());
     }
 
     public void setJoinMessageEnabled(Player player, boolean enabled) {
-        plugin.getJoinMessageManager().setMessageEnabled(player.getName(), enabled);
+        plugin.getJoinMessageManager().setMessageEnabled(player.getUniqueId().toString(), enabled);
     }
 
     // Hilfsmethoden

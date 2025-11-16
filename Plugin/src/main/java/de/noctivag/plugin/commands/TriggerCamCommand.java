@@ -1,7 +1,8 @@
 package de.noctivag.plugin.commands;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import com.destroystokyo.paper.profile.ProfileProperty;
+import de.noctivag.plugin.Plugin;
+import de.noctivag.plugin.messages.MessageManager;
+import de.noctivag.plugin.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -15,7 +16,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,38 +28,35 @@ public class TriggerCamCommand implements CommandExecutor {
     private final Map<UUID, Boolean> previousFlyingState;
     private final Map<UUID, Boolean> previousAllowFlight;
     private final Map<UUID, Integer> distanceCheckTasks;
-    
-    private Plugin plugin;
+
+    private final Plugin plugin;
+    private final MessageManager messageManager;
     private int maxDistance = 300;
 
-    public TriggerCamCommand() {
+    public TriggerCamCommand(Plugin plugin, MessageManager messageManager) {
+        this.plugin = plugin;
+        this.messageManager = messageManager;
         this.previousGameModes = new HashMap<>();
         this.previousLocations = new HashMap<>();
         this.cameraDummies = new HashMap<>();
         this.previousFlyingState = new HashMap<>();
         this.previousAllowFlight = new HashMap<>();
         this.distanceCheckTasks = new HashMap<>();
-    }
-    
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-        if (plugin instanceof de.noctivag.plugin.Plugin mainPlugin) {
-            this.maxDistance = mainPlugin.getConfigManager().getConfig().getInt("camera.max-distance", 300);
+        if (plugin != null) {
+            this.maxDistance = plugin.getConfigManager().getConfig().getInt("camera.max-distance", 300);
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("§cDieser Befehl kann nur von Spielern ausgeführt werden!");
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(messageManager.getError("error.players_only"));
             return true;
         }
-
-        Player player = (Player) sender;
         UUID playerId = player.getUniqueId();
 
         if (!player.hasPermission("plugin.cam")) {
-            player.sendMessage("§cDu hast keine Berechtigung für diesen Befehl!");
+            player.sendMessage(messageManager.getError("error.no_permission"));
             return true;
         }
 
@@ -70,19 +67,19 @@ public class TriggerCamCommand implements CommandExecutor {
             ArmorStand dummy = cameraDummies.remove(playerId);
             Boolean wasFlying = previousFlyingState.remove(playerId);
             Boolean couldFly = previousAllowFlight.remove(playerId);
-            
+
             // Stoppe Distance-Check Task
             Integer taskId = distanceCheckTasks.remove(playerId);
             if (taskId != null && plugin != null) {
                 Bukkit.getScheduler().cancelTask(taskId);
             }
-            
+
             // Entferne Unsichtbarkeit
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
-            
+
             // Setze GameMode zurück
             player.setGameMode(previousMode);
-            
+
             // Stelle Flugstatus wieder her
             if (couldFly != null) {
                 player.setAllowFlight(couldFly);
@@ -90,23 +87,23 @@ public class TriggerCamCommand implements CommandExecutor {
             if (wasFlying != null && wasFlying) {
                 player.setFlying(true);
             }
-            
+
             // Teleportiere zur ursprünglichen Position
             if (previousLocation != null) {
                 player.teleport(previousLocation);
             }
-            
+
             // Entferne den Dummy-ArmorStand
             if (dummy != null && !dummy.isDead()) {
                 dummy.remove();
             }
-            
-            player.sendMessage("§aKamera-Modus deaktiviert. Zurück zu " + previousMode.name() + ".");
+
+            player.sendMessage(messageManager.getMessage("cam.deactivated", previousMode.name()));
         } else {
             // Speichere den aktuellen GameMode und Position
             GameMode currentMode = player.getGameMode();
             Location currentLocation = player.getLocation().clone();
-            
+
             // Erstelle einen sichtbaren ArmorStand als Spieler-Dummy
             ArmorStand dummy = player.getWorld().spawn(currentLocation, ArmorStand.class);
             dummy.setVisible(true);
@@ -117,9 +114,9 @@ public class TriggerCamCommand implements CommandExecutor {
             dummy.setSmall(false);
             dummy.setCollidable(false);
             dummy.setCanPickupItems(false);
-            dummy.setCustomName("§e" + player.getName());
+            dummy.customName(ColorUtils.parseColor("§e" + player.getName()));
             dummy.setCustomNameVisible(true);
-            
+
             // Erstelle Spielerkopf mit Skin
             ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skullMeta = (SkullMeta) playerHead.getItemMeta();
@@ -127,7 +124,7 @@ public class TriggerCamCommand implements CommandExecutor {
                 skullMeta.setOwningPlayer(player);
                 playerHead.setItemMeta(skullMeta);
             }
-            
+
             // Kopiere komplettes Spieler-Equipment zum Dummy
             dummy.getEquipment().setHelmet(playerHead);  // Spielerkopf mit Skin
             dummy.getEquipment().setChestplate(player.getInventory().getChestplate());
@@ -135,53 +132,53 @@ public class TriggerCamCommand implements CommandExecutor {
             dummy.getEquipment().setBoots(player.getInventory().getBoots());
             dummy.getEquipment().setItemInMainHand(player.getInventory().getItemInMainHand());
             dummy.getEquipment().setItemInOffHand(player.getInventory().getItemInOffHand());
-            
+
             // Speichere Flugstatus
             previousFlyingState.put(playerId, player.isFlying());
             previousAllowFlight.put(playerId, player.getAllowFlight());
-            
+
             // Speichere alles
             previousGameModes.put(playerId, currentMode);
             previousLocations.put(playerId, currentLocation);
             cameraDummies.put(playerId, dummy);
-            
+
             // Mache Spieler unsichtbar und aktiviere Flug in Adventure-Modus
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
             player.setFlying(true);
-            
+
             // Starte Distance-Check Task
             if (plugin != null) {
                 int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
                     if (!player.isOnline() || !previousLocations.containsKey(playerId)) {
                         return;
                     }
-                    
+
                     Location startLocation = previousLocations.get(playerId);
                     Location currentLoc = player.getLocation();
                     double distance = startLocation.distance(currentLoc);
-                    
+
                     if (distance > maxDistance) {
                         // Berechne Richtungsvektor und limitiere auf maxDistance
                         double ratio = maxDistance / distance;
                         double newX = startLocation.getX() + (currentLoc.getX() - startLocation.getX()) * ratio;
                         double newY = startLocation.getY() + (currentLoc.getY() - startLocation.getY()) * ratio;
                         double newZ = startLocation.getZ() + (currentLoc.getZ() - startLocation.getZ()) * ratio;
-                        
-                        Location newLocation = new Location(startLocation.getWorld(), newX, newY, newZ, 
-                                                            currentLoc.getYaw(), currentLoc.getPitch());
+
+                        Location newLocation = new Location(startLocation.getWorld(), newX, newY, newZ,
+                            currentLoc.getYaw(), currentLoc.getPitch());
                         player.teleport(newLocation);
-                        player.sendMessage("§cMaximale Kamera-Distanz erreicht! (" + maxDistance + " Blöcke)");
+                        player.sendMessage(messageManager.getError("cam.max_distance_reached", String.valueOf(maxDistance)));
                     }
                 }, 10L, 10L); // Alle 0.5 Sekunden prüfen
-                
+
                 distanceCheckTasks.put(playerId, taskId);
             }
-            
-            player.sendMessage("§aKamera-Modus aktiviert. Nutze den Befehl erneut, um zurückzukehren.");
-            player.sendMessage("§7Du kannst fliegen und dich umsehen. Dein Körper bleibt sichtbar.");
-            player.sendMessage("§7Maximale Distanz: §e" + maxDistance + " Blöcke");
+
+            player.sendMessage(messageManager.getMessage("cam.activated"));
+            player.sendMessage(messageManager.getMessage("cam.info"));
+            player.sendMessage(messageManager.getMessage("cam.max_distance_info", String.valueOf(maxDistance)));
         }
 
         return true;
@@ -194,7 +191,7 @@ public class TriggerCamCommand implements CommandExecutor {
     public void removePlayer(UUID playerId) {
         previousGameModes.remove(playerId);
         previousLocations.remove(playerId);
-        
+
         ArmorStand dummy = cameraDummies.remove(playerId);
         if (dummy != null && !dummy.isDead()) {
             dummy.remove();
@@ -211,7 +208,7 @@ public class TriggerCamCommand implements CommandExecutor {
                 dummy.remove();
             }
         }
-        
+
         previousGameModes.clear();
         previousLocations.clear();
         cameraDummies.clear();

@@ -112,68 +112,68 @@ public class PlayerDataManager {
     
     // ==================== PREFIX METHODS ====================
     
-    public void setPrefix(String playerName, String prefix) {
+    public void setPrefix(String playerUuid, String prefix) {
         if (prefix == null || prefix.isEmpty()) {
-            prefixes.remove(playerName);
+            prefixes.remove(playerUuid);
         } else {
-            prefixes.put(playerName, prefix);
+            prefixes.put(playerUuid, prefix);
         }
     }
     
-    public String getPrefix(String playerName) {
-        return prefixes.get(playerName);
+    public String getPrefix(String playerUuid) {
+        return prefixes.get(playerUuid);
     }
     
-    public void removePrefix(String playerName) {
-        prefixes.remove(playerName);
+    public void removePrefix(String playerUuid) {
+        prefixes.remove(playerUuid);
     }
     
-    public boolean hasPrefix(String playerName) {
-        return prefixes.containsKey(playerName);
+    public boolean hasPrefix(String playerUuid) {
+        return prefixes.containsKey(playerUuid);
     }
     
     // ==================== SUFFIX METHODS ====================
     
-    public void setSuffix(String playerName, String suffix) {
+    public void setSuffix(String playerUuid, String suffix) {
         if (suffix == null || suffix.isEmpty()) {
-            suffixes.remove(playerName);
+            suffixes.remove(playerUuid);
         } else {
-            suffixes.put(playerName, suffix);
+            suffixes.put(playerUuid, suffix);
         }
     }
     
-    public String getSuffix(String playerName) {
-        return suffixes.get(playerName);
+    public String getSuffix(String playerUuid) {
+        return suffixes.get(playerUuid);
     }
     
-    public void removeSuffix(String playerName) {
-        suffixes.remove(playerName);
+    public void removeSuffix(String playerUuid) {
+        suffixes.remove(playerUuid);
     }
     
-    public boolean hasSuffix(String playerName) {
-        return suffixes.containsKey(playerName);
+    public boolean hasSuffix(String playerUuid) {
+        return suffixes.containsKey(playerUuid);
     }
     
     // ==================== NICKNAME METHODS ====================
     
-    public void setNickname(String playerName, String nickname) {
+    public void setNickname(String playerUuid, String nickname) {
         if (nickname == null || nickname.isEmpty()) {
-            nicknames.remove(playerName);
+            nicknames.remove(playerUuid);
         } else {
-            nicknames.put(playerName, nickname);
+            nicknames.put(playerUuid, nickname);
         }
     }
     
-    public String getNickname(String playerName) {
-        return nicknames.get(playerName);
+    public String getNickname(String playerUuid) {
+        return nicknames.get(playerUuid);
     }
     
-    public void removeNickname(String playerName) {
-        nicknames.remove(playerName);
+    public void removeNickname(String playerUuid) {
+        nicknames.remove(playerUuid);
     }
     
-    public boolean hasNickname(String playerName) {
-        return nicknames.containsKey(playerName);
+    public boolean hasNickname(String playerUuid) {
+        return nicknames.containsKey(playerUuid);
     }
     
     // ==================== UTILITY METHODS ====================

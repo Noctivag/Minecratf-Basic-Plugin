@@ -1,0 +1,28 @@
+# Configuration for custom crafting recipes
+#
+# You can enable or disable each recipe individually.
+# The shape is a 3x3 grid, where each character represents an ingredient.
+# The ingredients are defined below the shape, mapping a character to a material.
+#
+# A list of all available materials can be found here:
+# https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+
+recipes:
+  light_block:
+    enabled: true
+    shape:
+      - "GGG"
+      - "GTG"
+      - "GGG"
+    ingredients:
+      G: "GLASS"
+      T: "TORCH"
+  invisible_item_frame:
+    enabled: true
+    shape:
+      - "SSS"
+      - "SLS"
+      - "SSS"
+    ingredients:
+      S: "STICK"
+      L: "LEATHER"

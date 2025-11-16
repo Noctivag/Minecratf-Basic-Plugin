@@ -1,29 +1,156 @@
 # English language file
 prefix:
-  set: "&aYour prefix has been set to {0}"
+  set: "&aYour prefix has been set to: "
   remove: "&aYour prefix has been removed"
   no-permission: "&cYou don't have permission for this"
+  help:
+    - "&6=== Prefix Help ==="
+    - "&eSupported Formats:"
+    - "&7• Legacy: &f&c[Admin] "
+    - "&7• Hex: &f#FF0000[VIP] or &#FF0000[VIP]"
+    - "&7• Gradient: &f<gradient:#FF0000:#0000FF>[Admin]</gradient>"
+    - "&7• Rainbow: &f<rainbow>[VIP]</rainbow>"
+    - "&eExamples:"
+    - "&f/prefix &c[Admin] "
+    - "&f/prefix <gradient:#FF0000:#00FF00>[VIP]</gradient>"
+    - "&f/prefix <rainbow>[★]</rainbow>"
+  join_message:
+    usage:
+      set: "§cUsage: /joinmessage set <Player> <Message>"
+      remove: "§cUsage: /joinmessage remove <Player>"
+      setdefault: "§cUsage: /joinmessage setdefault <Message>"
+      toggle: "§cUsage: /joinmessage %arg% <Player>"
+    reload:
+      no_permission: "§cYou do not have permission for that!"
+      success: "§aJoin messages reloaded."
+    error:
+      generic: "§cAn error occurred: %error%"
+      player_not_found: "§cPlayer not found: %player%"
+    set:
+      success: "§aJoin message for %player% has been set to: "
+    remove:
+      success: "§aJoin message for %player% has been removed."
+      no_message: "§cNo custom join message exists for %player%."
+    toggle:
+      success: "§7Join messages for %player% have been "
+      enabled_status: "§aenabled"
+      disabled_status: "§cdisabled"
+    setdefault:
+      success: "§aDefault join message has been set to: "
+    help:
+      - "§6=== Join Message Help ==="
+      - "§e/joinmessage set <Player> <Message> - Sets a custom join message"
+      - "§e/joinmessage remove <Player> - Removes a custom join message"
+      - "§e/joinmessage toggle <Player> - Toggles join messages for a player"
+      - "§e/joinmessage enable <Player> - Enables join messages for a player"
+      - "§e/joinmessage disable <Player> - Disables join messages for a player"
+      - "§e/joinmessage setdefault <Message> - Sets the default join message"
+      - "§8Color codes: &#RRGGBB for hex colors, & for standard colors"
+      - "§8Placeholders: %player% for the player name"
+  vanish:
+    visible: "§aYou are now §lvisible§a!"
+    invisible: "§aYou are now §linvisible§a!"
+    admin_see: "§7Other admins can still see you."
+  invsee:
+    usage: "§cUsage: /invsee <Player>"
+    player_not_online: "§cThe player §e%player% §cis not online!"
+    success: "§aYou are now viewing the inventory of §e%player%§a."
+  sit:
+    already_sitting: "§cYou are already sitting."
+    not_sitting: "§cYou are not sitting."
+    info: "§eUse the command again to stand up."
+    stand_up: "§aYou are now standing up."
+    sit_down: "§aYou are now sitting."
+    cant_sit_here: "§cYou can't sit here."
+  cam:
+    activated: "§aCamera mode activated."
+    deactivated: "§cCamera mode deactivated. You are back in %s mode."
+    info: "§eUse the command again to exit the mode."
+    max_distance_info: "§eMaximum distance from starting point: %s blocks."
+    max_distance_reached: "§cMaximum distance of %s blocks reached."
+  admin:
+    kick:
+      no_permission: "§cYou don't have permission to kick players."
+      usage: "§cUsage: /kick <player> [reason]"
+      player_not_found: "§cPlayer not found."
+      success: "§aYou kicked %s for %s."
+    invsee:
+      no_permission: "§cYou don't have permission to see other players' inventories."
+      players_only: "§cOnly players can use this command."
+      usage: "§cUsage: /invsee <player>"
+      player_not_found: "§cPlayer not found."
+      success: "§aOpening %s's inventory."
+    time:
+      no_permission: "§cYou don't have permission to change the time."
+      day: "§aTime set to day."
+      day_main_world: "§aTime set to day in the main world."
+      night: "§aTime set to night."
+      night_main_world: "§aTime set to night in the main world."
+    weather:
+      no_permission: "§cYou don't have permission to change the weather."
+      sun: "§aWeather set to clear."
+      sun_main_world: "§aWeather set to clear in the main world."
+      rain: "§aWeather set to rain."
+      rain_main_world: "§aWeather set to rain in the main world."
 
-nickname:
-  set: "&aYour nickname has been set to {0}"
-  remove: "&aYour nickname has been removed"
-  no-permission: "&cYou don't have permission for this"
+tablist:
+  header:
+    line1: "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    line2: "§6§l  Server Performance  "
+    line3: "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+  footer:
+    ram: "§7RAM: {0}{1}{2}{3}"
+    tps: "§7TPS: {0}{1}"
+    mspt: "§7MSPT: {0}{1}"
+    line: "§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-join-message:
-  set: "&aJoin message for {0} has been set to: {1}"
-  remove: "&aJoin message for {0} has been removed"
-  enable: "&aJoin messages for {0} have been enabled"
-  disable: "&cJoin messages for {0} have been disabled"
-  default-set: "&aDefault join message has been set to: {0}"
-  no-custom: "&c{0} doesn't have a custom join message"
-
-commands:
-  players-only: "&cOnly players can use this command"
-  wrong-usage: "&cWrong usage. Use: {0}"
-
-workbench:
+chat:
+  separator: ": "
+crafting:
   no-permission: "&cYou don't have permission to open this workbench"
+  light_block: "Light Block"
+
+sit:
+  already_sitting: "§cYou are already sitting."
+  not_sitting: "§cYou are not sitting."
+  info: "§eUse the command again to stand up."
+  stand_up: "§aYou are now standing up."
+  sit_down: "§aYou are now sitting."
 
 sleep:
   player-sleeping: "&e%player% &7is now sleeping. &a%sleeping%&7/&a%required% &7players sleeping (&7%total% &7online&7)"
   night-skipped: "&aEnough players are sleeping! Skipping the night..."
+
+# New cosmetic commands
+hat:
+  no-item: "&cYou must hold an item in your hand to wear it as a hat!"
+  equipped: "&aYou are now wearing {0} as a hat!"
+  swapped: "&aYou swapped your hat with the item in your hand!"
+
+crawl:
+  enabled: "&aYou are now crawling! Move or jump to stop."
+  disabled: "&aYou stopped crawling."
+
+
+afk:
+  enabled: "&e{0} &7is now AFK."
+  disabled: "&e{0} &7is no longer AFK. &7(Away for: {1})"
+  
+skull:
+  usage: "&cUsage: /skull <player>"
+  received: "&aYou received the skull of {0}!"
+
+ride:
+  usage: "&cUsage: /ride <player> or /ride stop"
+  started: "&aYou are now riding {0}!"
+  being-ridden: "&e{0} &7is now riding you!"
+  stopped: "&aYou stopped riding."
+  not-riding: "&cYou are not riding anything!"
+  self: "&cYou cannot ride yourself!"
+  failed: "&cFailed to start riding! The target might already be riding something."
+
+general:
+  player-only: "&cThis command can only be used by players!"
+  no-permission: "&cYou don't have permission to use this command!"
+  player-not-found: "&cPlayer not found!"
+

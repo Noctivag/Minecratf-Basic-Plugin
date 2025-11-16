@@ -19,7 +19,7 @@ public class ChatListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(AsyncChatEvent event) {
         // Check if chat formatting is enabled
         if (!plugin.getConfig().getBoolean("chat.enabled", true)) {
@@ -29,9 +29,9 @@ public class ChatListener implements Listener {
         Player player = event.getPlayer();
 
         // Get player data
-        String prefix = plugin.getPlayerDataManager().getPrefix(player.getUniqueId());
-        String suffix = plugin.getPlayerDataManager().getSuffix(player.getUniqueId());
-        String nickname = plugin.getPlayerDataManager().getNickname(player.getUniqueId());
+        String prefix = plugin.getPlayerDataManager().getPrefix(player.getName());
+        String suffix = plugin.getPlayerDataManager().getSuffix(player.getName());
+        String nickname = plugin.getPlayerDataManager().getNickname(player.getName());
 
         // Check LuckPerms integration
         if (plugin.getLuckPermsHook() != null && plugin.getLuckPermsHook().shouldSyncDisplayNames()) {
@@ -53,9 +53,6 @@ public class ChatListener implements Listener {
         format = format.replace("%prefix%", prefix != null ? prefix + " " : "");
         format = format.replace("%suffix%", suffix != null ? " " + suffix : "");
         format = format.replace("%player%", playerName);
-
-        // Parse colors in format
-        Component formatComponent = ColorUtils.parseColor(format);
 
         // Get message component
         Component message = event.message();

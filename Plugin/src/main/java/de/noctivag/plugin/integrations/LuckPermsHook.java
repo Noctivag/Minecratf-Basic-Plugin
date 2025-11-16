@@ -76,18 +76,24 @@ public class LuckPermsHook {
      * Get player's prefix from LuckPerms
      */
     public String getPrefix(Player player) {
-        if (!isEnabled() || !syncDisplayNames) {
+        if (!isEnabled() || !syncDisplayNames || player == null) {
             return null;
         }
 
         try {
+            // Load user data if not cached (async-safe)
             User user = luckPerms.getUserManager().getUser(player.getUniqueId());
             if (user == null) {
-                return null;
+                // Try loading if not in cache
+                luckPerms.getUserManager().loadUser(player.getUniqueId());
+                user = luckPerms.getUserManager().getUser(player.getUniqueId());
+                if (user == null) {
+                    return null;
+                }
             }
 
             CachedMetaData metaData = user.getCachedData().getMetaData();
-            return metaData.getPrefix();
+            return metaData != null ? metaData.getPrefix() : null;
         } catch (Exception e) {
             plugin.getLogger().warning("Error getting prefix from LuckPerms for " + player.getName() + ": " + e.getMessage());
             return null;
@@ -98,18 +104,22 @@ public class LuckPermsHook {
      * Get player's suffix from LuckPerms
      */
     public String getSuffix(Player player) {
-        if (!isEnabled() || !syncDisplayNames) {
+        if (!isEnabled() || !syncDisplayNames || player == null) {
             return null;
         }
 
         try {
             User user = luckPerms.getUserManager().getUser(player.getUniqueId());
             if (user == null) {
-                return null;
+                luckPerms.getUserManager().loadUser(player.getUniqueId());
+                user = luckPerms.getUserManager().getUser(player.getUniqueId());
+                if (user == null) {
+                    return null;
+                }
             }
 
             CachedMetaData metaData = user.getCachedData().getMetaData();
-            return metaData.getSuffix();
+            return metaData != null ? metaData.getSuffix() : null;
         } catch (Exception e) {
             plugin.getLogger().warning("Error getting suffix from LuckPerms for " + player.getName() + ": " + e.getMessage());
             return null;

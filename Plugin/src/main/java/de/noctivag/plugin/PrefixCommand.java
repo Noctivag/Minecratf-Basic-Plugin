@@ -2,9 +2,9 @@ package de.noctivag.plugin;
 
 import de.noctivag.plugin.data.PlayerDataManager;
 import de.noctivag.plugin.managers.NametagManager;
+import de.noctivag.plugin.messages.MessageManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,49 +14,37 @@ import org.jetbrains.annotations.NotNull;
 public class PrefixCommand implements CommandExecutor {
     private final PlayerDataManager playerDataManager;
     private final NametagManager nametagManager;
+    private final MessageManager messageManager;
 
-    public PrefixCommand(PlayerDataManager playerDataManager, NametagManager nametagManager) {
+    public PrefixCommand(PlayerDataManager playerDataManager, NametagManager nametagManager, MessageManager messageManager) {
         this.playerDataManager = playerDataManager;
         this.nametagManager = nametagManager;
+        this.messageManager = messageManager;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("Nur Spieler können diesen Befehl nutzen.").color(NamedTextColor.RED));
+            sender.sendMessage(messageManager.getError("error.players_only"));
             return true;
         }
 
         if (!player.hasPermission("plugin.prefix")) {
-            player.sendMessage(Component.text("Du hast keine Berechtigung für diesen Befehl!").color(NamedTextColor.RED));
+            player.sendMessage(messageManager.getError("error.no_permission"));
             return true;
         }
 
         if (args.length == 0) {
-            player.sendMessage(Component.text("=== Prefix-Hilfe ===").color(NamedTextColor.GOLD));
-            player.sendMessage(Component.text("Unterstützte Formate:").color(NamedTextColor.YELLOW));
-            player.sendMessage(Component.text("• Legacy: ").color(NamedTextColor.GRAY)
-                .append(Component.text("&c[Admin] ").color(NamedTextColor.WHITE)));
-            player.sendMessage(Component.text("• Hex: ").color(NamedTextColor.GRAY)
-                .append(Component.text("#FF0000[VIP] oder &#FF0000[VIP]").color(NamedTextColor.WHITE)));
-            player.sendMessage(Component.text("• Gradient: ").color(NamedTextColor.GRAY)
-                .append(Component.text("<gradient:#FF0000:#0000FF>[Admin]</gradient>").color(NamedTextColor.WHITE)));
-            player.sendMessage(Component.text("• Rainbow: ").color(NamedTextColor.GRAY)
-                .append(Component.text("<rainbow>[VIP]</rainbow>").color(NamedTextColor.WHITE)));
-            player.sendMessage(Component.text("Beispiele:").color(NamedTextColor.YELLOW));
-            player.sendMessage(Component.text("/prefix &c[Admin] ").color(NamedTextColor.WHITE));
-            player.sendMessage(Component.text("/prefix <gradient:#FF0000:#00FF00>[VIP]</gradient>").color(NamedTextColor.WHITE));
-            player.sendMessage(Component.text("/prefix <rainbow>[★]</rainbow>").color(NamedTextColor.WHITE));
+            messageManager.getMessageList("prefix.help").forEach(player::sendMessage);
             return true;
         }
 
         String prefix = String.join(" ", args);
-        playerDataManager.setPrefix(player.getName(), prefix);
+        playerDataManager.setPrefix(player.getUniqueId().toString(), prefix);
         playerDataManager.savePlayerData(); // SOFORT SPEICHERN
         nametagManager.updateNametag(player);
 
-        player.sendMessage(Component.text("Dein Prefix wurde gesetzt zu: ").color(NamedTextColor.GREEN)
-            .append(ColorUtils.parseColor(prefix)));
+        player.sendMessage(messageManager.getMessage("prefix.set").append(ColorUtils.parseColor(prefix)));
         return true;
     }
 }

@@ -1,0 +1,65 @@
+# Configure permissions for each command here.
+# The key is the command name (e.g., "heal"), and the value is the permission node.
+# If a command is not listed here, a default permission will be used (e.g., "plugin.heal").
+permissions:
+  # Basic Commands
+  heal: "plugin.heal"
+  feed: "plugin.feed"
+  fly: "plugin.fly"
+  gmc: "plugin.gamemode.creative"
+  gms: "plugin.gamemode.survival"
+  gmsp: "plugin.gamemode.spectator"
+  clearinventory: "plugin.clearinventory"
+
+  # Workbench Commands
+  craftingtable: "plugin.workbench.craftingtable"
+  anvil: "plugin.workbench.anvil"
+  enderchest: "plugin.workbench.enderchest"
+  grindstone: "plugin.workbench.grindstone"
+  smithingtable: "plugin.workbench.smithingtable"
+  stonecutter: "plugin.workbench.stonecutter"
+  loom: "plugin.workbench.loom"
+  cartography: "plugin.workbench.cartography"
+
+  # Prefix/Nick Commands
+  prefix: "plugin.prefix"
+  unprefix: "plugin.unprefix"
+  suffix: "plugin.suffix"
+  unsuffix: "plugin.unsuffix"
+  nick: "plugin.nick"
+  unnick: "plugin.unnick"
+  joinmessage: "plugin.joinmessage"
+
+  # Trigger Commands
+  sit: "plugin.sit"
+  cam: "plugin.cam"
+
+  # Admin Commands
+  vanish: "plugin.vanish"
+  invsee: "plugin.invsee"
+  kick: "plugin.admin.kick"
+  day: "plugin.admin.time"
+  night: "plugin.admin.time"
+  sun: "plugin.admin.weather"
+  rain: "plugin.admin.weather"
+
+  # Rank Commands
+  rank: "plugin.rank"
+  setrank: "plugin.setrank"
+
+  # Teleport Commands
+  home: "plugin.home"
+  sethome: "plugin.home"
+  delhome: "plugin.home"
+  homes: "plugin.home"
+  warp: "plugin.warp"
+  setwarp: "plugin.warp"
+  delwarp: "plugin.warp"
+  warps: "plugin.warp"
+  spawn: "plugin.spawn"
+  setspawn: "plugin.spawn"
+  tp: "plugin.teleport.tp"
+  tpa: "plugin.teleport.tpa"
+  tphere: "plugin.teleport.tphere"
+  tpaccept: "plugin.teleport.tpaccept"
+  tpdeny: "plugin.teleport.tpdeny"

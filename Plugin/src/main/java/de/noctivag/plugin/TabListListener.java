@@ -27,70 +27,34 @@ public class TabListListener implements Listener {
         this.playerDataManager = playerDataManager;
         this.joinMessageManager = Objects.requireNonNull(joinMessageManager, "JoinMessageManager cannot be null");
         this.rankManager = plugin.getRankManager();
+        if (this.rankManager == null) {
+            plugin.getLogger().warning("RankManager is not initialized!");
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(@NotNull PlayerJoinEvent event) {
-        try {
-            Player player = event.getPlayer();
-            if (player == null) return;
+        Player player = event.getPlayer();
+        
+        // Delay by one tick to ensure permissions are loaded
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            if (!player.isOnline()) return;
 
-            String playerName = player.getName();
-            String customPrefix = "";
-            String nick = playerName;
+            try {
+                updatePlayerDisplay(player);
 
-            if (playerDataManager != null) {
-                String storedPrefix = playerDataManager.getPrefix(playerName);
-                String storedNick = playerDataManager.getNickname(playerName);
-                if (storedPrefix != null) {
-                    customPrefix = storedPrefix;
+                // Setze die Join-Nachricht
+                Component joinMessage = joinMessageManager.getJoinMessage(player.getUniqueId().toString());
+                if (joinMessage != null) {
+                    event.joinMessage(joinMessage);
                 }
-                if (storedNick != null && !storedNick.isEmpty()) {
-                    nick = storedNick;
-                }
-            }
-
-            // Get rank prefix if available
-            String rankPrefix = "";
-            if (rankManager != null) {
-                Rank rank = rankManager.getHighestRank(player.getUniqueId());
-                if (rank != null) {
-                    rankPrefix = rank.getPrefix();
+            } catch (Exception e) {
+                plugin.getLogger().severe("Fehler im TabListListener (delayed task): " + e.getMessage());
+                if (plugin.getConfigManager().isDebugMode()) {
+                    e.printStackTrace();
                 }
             }
-
-            // Combine rank prefix with custom prefix
-            String finalPrefix = ColorUtils.combinePrefix(rankPrefix, customPrefix);
-
-            // Erstelle den DisplayName nur einmal
-            Component displayName = Component.empty()
-                    .append(ColorUtils.parseColor(finalPrefix))
-                    .append(Component.space())
-                    .append(ColorUtils.parseColor(nick));
-
-            // Setze den DisplayName und TabList-Namen synchron
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                try {
-                    if (player.isOnline()) {
-                        player.displayName(displayName);
-                        player.playerListName(displayName);
-                    }
-                } catch (Exception e) {
-                    plugin.getLogger().warning("Fehler beim Setzen des Displaynamens für " + playerName);
-                }
-            });
-
-            // Setze die Join-Nachricht
-            Component joinMessage = joinMessageManager.getJoinMessage(playerName);
-            if (joinMessage != null) {
-                event.joinMessage(joinMessage);
-            }
-        } catch (Exception e) {
-            plugin.getLogger().severe("Fehler im TabListListener: " + e.getMessage());
-            if (plugin.getConfigManager().isDebugMode()) {
-                e.printStackTrace();
-            }
-        }
+        }, 1L);
     }
 
     /**
@@ -100,13 +64,13 @@ public class TabListListener implements Listener {
      */
     public void updatePlayerDisplay(@NotNull Player player) {
         try {
-            String playerName = player.getName();
+            String playerUuid = player.getUniqueId().toString();
             String customPrefix = "";
-            String nick = playerName;
+            String nick = player.getName();
 
             if (playerDataManager != null) {
-                String storedPrefix = playerDataManager.getPrefix(playerName);
-                String storedNick = playerDataManager.getNickname(playerName);
+                String storedPrefix = playerDataManager.getPrefix(playerUuid);
+                String storedNick = playerDataManager.getNickname(playerUuid);
                 if (storedPrefix != null) {
                     customPrefix = storedPrefix;
                 }
@@ -139,7 +103,7 @@ public class TabListListener implements Listener {
                         player.playerListName(displayName);
                     }
                 } catch (Exception e) {
-                    plugin.getLogger().warning("Fehler beim Aktualisieren des Displaynamens für " + playerName);
+                    plugin.getLogger().warning("Fehler beim Aktualisieren des Displaynamens für " + player.getName());
                 }
             });
         } catch (Exception e) {

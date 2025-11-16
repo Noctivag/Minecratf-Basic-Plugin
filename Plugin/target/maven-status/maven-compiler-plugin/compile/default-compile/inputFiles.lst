@@ -1,45 +1,92 @@
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/BasicCommands.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/JoinMessageCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/JoinMessageManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/NickCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/Plugin.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/PluginAPI.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/PrefixCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/PrefixListener.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/SuffixCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/TabListListener.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/UnNickCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/UnPrefixCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/UnSuffixCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/WorkbenchCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/InvseeCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/TriggerCamCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/TriggerSitCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/VanishCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/admin/AdminCommands.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/ranks/RankCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/ranks/SetRankCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/teleport/HomeCommands.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/teleport/SpawnCommand.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/teleport/TeleportCommands.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/commands/teleport/WarpCommands.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/config/ConfigManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/data/DataManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/data/PlayerDataManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/database/DatabaseProvider.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/database/MySQLProvider.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/database/SQLiteProvider.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/listeners/CameraListener.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/listeners/PlayerListener.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/HomeManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/NametagManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/SitManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/SleepManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/TabListManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/managers/WarpManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/messages/MessageManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/permissions/Rank.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/permissions/RankManager.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/tabcomplete/GlobalTabCompleter.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/tabcomplete/JoinMessageTabCompleter.java
-/workspaces/Minecratf-Basic-Plugin/Plugin/src/main/java/de/noctivag/plugin/utils/ColorUtils.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\api\BasicPluginAPI.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\BasicCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\admin\AdminCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\AfkCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\ConfigCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\CrawlCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\economy\EconomyCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\HatCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\InvseeCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\kits\KitCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\LayCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\messaging\MessagingCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\moderation\ModerationCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\PluginAdminCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\ranks\RankCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\ranks\SetRankCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\ReloadCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\RideCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\SkullCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\teleport\BackCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\teleport\HomeCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\teleport\RandomTeleportCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\teleport\SpawnCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\teleport\TeleportCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\teleport\WarpCommands.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\TriggerCamCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\TriggerSitCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\commands\VanishCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\config\ConfigManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\crafting\RecipeManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\data\DataManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\data\PlayerDataManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\database\DatabaseProvider.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\database\MySQLProvider.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\database\SQLiteProvider.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\economy\EconomyManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\events\PlayerSitEvent.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\events\PlayerUnsitEvent.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\gui\ChatInputListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\gui\ChatInputManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\gui\GuiListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\gui\GuiManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\integrations\LuckPermsHook.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\integrations\PlaceholderAPIHook.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\JoinMessageCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\JoinMessageManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\kits\KitManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\CameraListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\ChatListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\CosmeticListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\entity\GhastSpeedListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\InvisibleItemFrameListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\ItemFrameListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\PlayerListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\TeleportWarmupListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\listeners\VanishListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\AfkManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\CooldownManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\CrawlManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\HomeManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\LayManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\NametagManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\RideManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\SitManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\TabListManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\TeleportWarmupManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\managers\WarpManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\messages\MessageManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\messaging\MessagingManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\moderation\ModerationManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\modules\ModuleManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\NickCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\permissions\PermissionManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\permissions\Rank.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\permissions\RankManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\Plugin.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\PluginAPI.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\PrefixCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\PrefixListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\SuffixCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\tabcomplete\GlobalTabCompleter.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\tabcomplete\JoinMessageTabCompleter.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\tabcomplete\PluginAdminTabCompleter.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\TabListListener.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\teleport\BackManager.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\UnNickCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\UnPrefixCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\UnSuffixCommand.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\utils\ColorUtils.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\utils\PluginCompatibility.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\utils\SafeTeleportUtil.java
+C:\Users\Justus\Desktop\Git Sync\Minecratf-Basic-Plugin\Plugin\src\main\java\de\noctivag\plugin\WorkbenchCommand.java

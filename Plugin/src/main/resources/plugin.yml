@@ -1,347 +1,395 @@
-name: Plugin
-version: '1.0-SNAPSHOT'
+name: BasicPlugin
+version: 1.0
 main: de.noctivag.plugin.Plugin
 api-version: '1.21'
 softdepend: [LuckPerms, PlaceholderAPI]
 authors: [Noctivag]
-description: Advanced all-in-one Minecraft plugin with modular features
+description: A basic plugin with essential commands.
 website: https://github.com/Noctivag/Minecratf-Basic-Plugin
 commands:
   prefix:
-    description: Setzt deinen Chat-Prefix
-    usage: /prefix <Text>
+    description: Set a custom prefix.
+    usage: /prefix <prefix>
   unprefix:
-    description: Entfernt deinen Chat-Prefix
+    description: Remove your custom prefix.
     usage: /unprefix
   suffix:
-    description: Setzt deinen Chat-Suffix
-    usage: /suffix <Text>
+    description: Set a custom suffix.
+    usage: /suffix <suffix>
   unsuffix:
-    description: Entfernt deinen Chat-Suffix
+    description: Remove your custom suffix.
     usage: /unsuffix
   nick:
-    description: Ändert deinen Chat-Namen
-    usage: /nick <Name>
+    description: Set a custom nickname.
+    usage: /nick <nickname>
   unnick:
-    description: Entfernt deinen Nickname
+    description: Remove your custom nickname.
     usage: /unnick
+  joinmessage:
+    description: Customize your join message.
+    usage: /joinmessage <message|on|off|reset>
+  heal:
+    description: Heals the player.
+    usage: /heal [player]
+  feed:
+    description: Feeds the player.
+    usage: /feed [player]
+  fly:
+    description: Toggles fly mode.
+    usage: /fly [player]
+  gmc:
+    description: Sets gamemode to creative.
+    usage: /gmc [player]
+  gms:
+    description: Sets gamemode to survival.
+    usage: /gms [player]
+  gmsp:
+    description: Sets gamemode to spectator.
+    usage: /gmsp [player]
   craftingtable:
-    description: Öffnet eine Werkbank
+    description: Opens a crafting table.
     usage: /craftingtable
     aliases: [craft, workbench]
   anvil:
-    description: Öffnet einen Amboss
+    description: Opens an anvil.
     usage: /anvil
   enderchest:
-    description: Öffnet deine Endertruhe
+    description: Opens your enderchest.
     usage: /enderchest
     aliases: [ec]
   grindstone:
-    description: Öffnet einen Schleifstein
+    description: Opens a grindstone.
     usage: /grindstone
   smithingtable:
-    description: Öffnet einen Schmiedetisch
+    description: Opens a smithingtable.
     usage: /smithingtable
   stonecutter:
-    description: Öffnet einen Steinsäger
+    description: Opens a stonecutter.
     usage: /stonecutter
   loom:
-    description: Öffnet einen Webstuhl
+    description: Opens a loom.
     usage: /loom
   cartography:
-    description: Öffnet einen Kartentisch
+    description: Opens a cartography table.
     usage: /cartography
     aliases: [cartographytable]
-  heal:
-    description: Heilt dich vollständig
-    usage: /heal
-  feed:
-    description: Stillt deinen Hunger
-    usage: /feed
-  clearinventory:
-    description: Leert dein Inventar
-    usage: /clearinventory
-    aliases: [ci]
-  fly:
-    description: Aktiviert/Deaktiviert den Flugmodus
-    usage: /fly
-  gmc:
-    description: Setzt deinen Spielmodus auf Kreativ
-    usage: /gmc
-  gms:
-    description: Setzt deinen Spielmodus auf Überleben
-    usage: /gms
-  gmsp:
-    description: Setzt deinen Spielmodus auf Zuschauer
-    usage: /gmsp
-  joinmessage:
-    description: Verwaltet die Join-Nachrichten
-    usage: |
-      /joinmessage set <Spieler> <Nachricht> - Setzt Join-Nachricht
-      /joinmessage remove <Spieler> - Entfernt Join-Nachricht
-      /joinmessage toggle <Spieler> - Schaltet Join-Nachricht um
-      /joinmessage enable/disable <Spieler> - Aktiviert/Deaktiviert
-    aliases: [jmsg, joinmsg]
   sit:
-    description: Setzt dich hin oder lässt dich aufstehen
+    description: Sit down on the block you are looking at.
     usage: /sit
     aliases: [triggersit]
+  crawl:
+    description: Toggle crawling mode.
+    usage: /crawl
+  afk:
+    description: Toggle AFK status.
+    usage: /afk
+    aliases: [away]
+  hat:
+    description: Wear the item in your hand as a hat.
+    usage: /hat
+  skull:
+    description: Get a player's head/skull.
+    usage: /skull <player>
+    aliases: [head, playerskull]
+  ride:
+    description: Ride another player or entity.
+    usage: /ride <player|stop>
   cam:
-    description: Aktiviert/Deaktiviert den Kamera-Modus (Spectator)
+    description: Toggles third person camera.
     usage: /cam
     aliases: [triggercam, camera]
   vanish:
-    description: Macht dich unsichtbar für andere Spieler
+    description: Become invisible to other players.
     usage: /vanish
     aliases: [v]
+  invsee:
+    description: Look into another player's inventory.
+    usage: /invsee <player>
   rank:
-    description: Zeigt Rang-Informationen und verwaltet Ränge
-    usage: /rank [player|list|create|delete|setprefix|...]
+    description: Manage ranks.
+    usage: /rank <create|delete|info|list|setprefix|setsuffix|addperm|removeperm>
   setrank:
-    description: Setzt den Rang eines Spielers
+    description: Set a player's rank.
     usage: /setrank <player> <rank>
-  sethome:
-    description: Setzt einen Home-Punkt
-    usage: /sethome [name]
   home:
-    description: Teleportiert zu einem Home-Punkt
-    usage: /home [name]
+    description: Teleport to one of your homes.
+    usage: /home <name>
+  sethome:
+    description: Set a home at your current location.
+    usage: /sethome <name>
   delhome:
-    description: Löscht einen Home-Punkt
+    description: Delete one of your homes.
     usage: /delhome <name>
   homes:
-    description: Zeigt alle Home-Punkte an
+    description: List all your homes.
     usage: /homes
-  setwarp:
-    description: Setzt einen Warp-Punkt
-    usage: /setwarp <name>
   warp:
-    description: Teleportiert zu einem Warp-Punkt
+    description: Teleport to a warp.
     usage: /warp <name>
+  setwarp:
+    description: Create a new warp.
+    usage: /setwarp <name>
   delwarp:
-    description: Löscht einen Warp-Punkt
+    description: Delete a warp.
     usage: /delwarp <name>
   warps:
-    description: Zeigt alle Warp-Punkte an
+    description: List all available warps.
     usage: /warps
   spawn:
-    description: Teleportiert zum Spawn
+    description: Teleport to the spawn.
     usage: /spawn
   setspawn:
-    description: Setzt den Spawn-Punkt
+    description: Set the spawn location.
     usage: /setspawn
   tp:
-    description: Teleportiert zu einem Spieler
+    description: Teleport to a player.
     usage: /tp <player>
   tpa:
-    description: Sendet eine Teleport-Anfrage
+    description: Request to teleport to a player.
     usage: /tpa <player>
   tphere:
-    description: Teleportiert einen Spieler zu dir
+    description: Request a player to teleport to you.
     usage: /tphere <player>
   tpaccept:
-    description: Akzeptiert eine Teleport-Anfrage
+    description: Accept a teleport request.
     usage: /tpaccept
   tpdeny:
-    description: Lehnt eine Teleport-Anfrage ab
+    description: Deny a teleport request.
     usage: /tpdeny
   kick:
-    description: Kickt einen Spieler vom Server
+    description: Kick a player from the server.
     usage: /kick <player> [reason]
-  invsee:
-    description: Öffnet das Inventar eines Spielers
-    usage: /invsee <player>
   day:
-    description: Setzt die Zeit auf Tag
+    description: Set the time to day.
     usage: /day
   night:
-    description: Setzt die Zeit auf Nacht
+    description: Set the time to night.
     usage: /night
   sun:
-    description: Setzt das Wetter auf sonnig
+    description: Set the weather to clear.
     usage: /sun
   rain:
-    description: Setzt das Wetter auf Regen
+    description: Set the weather to rain.
     usage: /rain
-
+  pluginreload:
+    description: Reloads the plugin configuration and messages.
+    usage: /pluginreload
+  plugin:
+    description: Plugin administration commands.
+    usage: "/plugin set sit-offset <value>"
+  config:
+    description: Open the plugin configuration GUI.
+    usage: /config
+    aliases: [pluginconfig, pcfg]
+  balance:
+    description: Check your balance.
+    usage: /balance [player]
+    aliases: [bal, money]
+  pay:
+    description: Pay money to another player.
+    usage: /pay <player> <amount>
+  eco:
+    description: Admin economy commands.
+    usage: /eco <give|take|set> <player> <amount>
+  msg:
+    description: Send a private message to a player.
+    usage: /msg <player> <message>
+    aliases: [tell, whisper, w, pm]
+  reply:
+    description: Reply to the last message received.
+    usage: /reply <message>
+    aliases: [r]
+  ignore:
+    description: Ignore messages from a player.
+    usage: /ignore <player>
+  kit:
+    description: Claim a kit.
+    usage: /kit <name>
+  kits:
+    description: List all available kits.
+    usage: /kits
+  ban:
+    description: Ban a player.
+    usage: /ban <player> [reason]
+  tempban:
+    description: Temporarily ban a player.
+    usage: /tempban <player> <duration> [reason]
+  unban:
+    description: Unban a player.
+    usage: /unban <player>
+  mute:
+    description: Mute a player.
+    usage: /mute <player> [duration]
+  unmute:
+    description: Unmute a player.
+    usage: /unmute <player>
+  warn:
+    description: Warn a player.
+    usage: /warn <player> <reason>
+  warnings:
+    description: Check warnings for a player.
+    usage: /warnings [player]
+  back:
+    description: Teleport to your previous location.
+    usage: /back
+  tprandom:
+    description: Teleport to a random location.
+    usage: /tprandom
+    aliases: [rtp, wild]
 permissions:
-  basiccommands.*:
-    description: Gibt Zugriff auf alle Basic-Commands
-    default: op
-    children:
-      basiccommands.heal: true
-      basiccommands.feed: true
-      basiccommands.clearinventory: true
-      basiccommands.fly: true
-      basiccommands.gamemode.*: true
-  basiccommands.heal:
-    description: Erlaubt die Nutzung des /heal Befehls
-    default: op
-  basiccommands.feed:
-    description: Erlaubt die Nutzung des /feed Befehls
-    default: op
-  basiccommands.clearinventory:
-    description: Erlaubt die Nutzung des /clearinventory Befehls
-    default: op
-  basiccommands.fly:
-    description: Erlaubt die Nutzung des /fly Befehls
-    default: op
-  basiccommands.gamemode.*:
-    description: Erlaubt die Nutzung aller Gamemode-Befehle
-    default: op
-    children:
-      basiccommands.gamemode.creative: true
-      basiccommands.gamemode.survival: true
-      basiccommands.gamemode.spectator: true
-  basiccommands.gamemode.creative:
-    description: Erlaubt die Nutzung des /gmc Befehls
-    default: op
-  basiccommands.gamemode.survival:
-    description: Erlaubt die Nutzung des /gms Befehls
-    default: op
-  basiccommands.gamemode.spectator:
-    description: Erlaubt die Nutzung des /gmsp Befehls
-    default: op
-  workbench.*:
-    description: Gibt Zugriff auf alle Werkbank-Befehle
-    default: true
-    children:
-      workbench.craftingtable: true
-      workbench.anvil: true
-      workbench.enderchest: true
-      workbench.grindstone: true
-      workbench.smithingtable: true
-      workbench.stonecutter: true
-      workbench.loom: true
-      workbench.cartography: true
-  workbench.craftingtable:
-    description: Erlaubt die Nutzung der Werkbank
-    default: true
-  workbench.anvil:
-    description: Erlaubt die Nutzung des Amboss
-    default: true
-  workbench.enderchest:
-    description: Erlaubt die Nutzung der Endertruhe
-    default: true
-  workbench.grindstone:
-    description: Erlaubt die Nutzung des Schleifsteins
-    default: true
-  workbench.smithingtable:
-    description: Erlaubt die Nutzung des Schmiedetischs
-    default: true
-  workbench.stonecutter:
-    description: Erlaubt die Nutzung des Steinsägers
-    default: true
-  workbench.loom:
-    description: Erlaubt die Nutzung des Webstuhls
-    default: true
-  workbench.cartography:
-    description: Erlaubt die Nutzung des Kartentischs
-    default: true
-  plugin.*:
-    description: Gibt Zugriff auf alle Plugin-Funktionen
-    default: op
-    children:
-      plugin.prefix: true
-      plugin.suffix: true
-      plugin.nick: true
-      plugin.joinmessage: true
-      plugin.sit: true
-      plugin.cam: true
-      plugin.vanish: true
-      plugin.vanish.see: true
-      plugin.invsee: true
-      basiccommands.*: true
   plugin.prefix:
-    description: Erlaubt das Setzen eines Prefixes
-    default: true
+    description: Allows setting a custom prefix.
+    default: op
   plugin.suffix:
-    description: Erlaubt das Setzen eines Suffixes
-    default: true
+    description: Allows setting a custom suffix.
+    default: op
   plugin.nick:
-    description: Erlaubt das Setzen eines Nicknames
-    default: true
-  plugin.sit:
-    description: Erlaubt das Sitzen
-    default: true
-  plugin.cam:
-    description: Erlaubt den Kamera-Modus
-    default: true
-  plugin.vanish:
-    description: Erlaubt die Nutzung des /vanish Befehls
-    default: op
-  plugin.vanish.see:
-    description: Erlaubt das Sehen von unsichtbaren Spielern
-    default: op
-  plugin.invsee:
-    description: Erlaubt die Nutzung des /invsee Befehls
+    description: Allows setting a custom nickname.
     default: op
   plugin.joinmessage:
-    description: Erlaubt das Verwalten von Join-Nachrichten
+    description: Allows customizing the join message.
     default: op
-  rank.list:
-    description: Erlaubt die Nutzung des /cam Befehls
-    default: true
-  rank.list:
-    description: Erlaubt das Anzeigen aller Ränge
-    default: true
-  rank.admin:
-    description: Erlaubt die Verwaltung von Rängen
+  plugin.heal:
+    description: Allows using the heal command.
     default: op
-  essentials.sethome:
-    description: Erlaubt das Setzen von Home-Punkten
-    default: true
-  essentials.home:
-    description: Erlaubt das Teleportieren zu Home-Punkten
-    default: true
-  essentials.delhome:
-    description: Erlaubt das Löschen von Home-Punkten
-    default: true
-  essentials.homes:
-    description: Erlaubt das Anzeigen aller Home-Punkte
-    default: true
-  essentials.setwarp:
-    description: Erlaubt das Setzen von Warp-Punkten
+  plugin.feed:
+    description: Allows using the feed command.
     default: op
-  essentials.warp:
-    description: Erlaubt das Teleportieren zu Warp-Punkten
+  plugin.fly:
+    description: Allows using the fly command.
+    default: op
+  plugin.gamemode:
+    description: Allows changing gamemode.
+    default: op
+  plugin.workbench:
+    description: Allows opening virtual workbenches.
+    default: op
+  plugin.sit:
+    description: Allows using the sit command.
     default: true
-  essentials.delwarp:
-    description: Erlaubt das Löschen von Warp-Punkten
-    default: op
-  essentials.warps:
-    description: Erlaubt das Anzeigen aller Warp-Punkte
+  plugin.crawl:
+    description: Allows using the crawl command.
     default: true
-  essentials.spawn:
-    description: Erlaubt das Teleportieren zum Spawn
+  plugin.afk:
+    description: Allows using the afk command.
     default: true
-  essentials.setspawn:
-    description: Erlaubt das Setzen des Spawn-Punkts
-    default: op
-  essentials.tp:
-    description: Erlaubt das Teleportieren zu Spielern
-    default: op
-  essentials.tpa:
-    description: Erlaubt das Senden von Teleport-Anfragen
+  plugin.hat:
+    description: Allows using the hat command.
     default: true
-  essentials.tphere:
-    description: Erlaubt das Teleportieren von Spielern zu sich
+  plugin.skull:
+    description: Allows getting player skulls.
     default: op
-  essentials.tpaccept:
-    description: Erlaubt das Akzeptieren von Teleport-Anfragen
+  plugin.ride:
+    description: Allows using the ride command.
     default: true
-  essentials.tpdeny:
-    description: Erlaubt das Ablehnen von Teleport-Anfragen
+  plugin.ride.players:
+    description: Allows riding other players.
+    default: op
+  plugin.cam:
+    description: Allows using the cam command.
     default: true
-  admin.kick:
-    description: Erlaubt das Kicken von Spielern
+  plugin.vanish:
+    description: Allows using the vanish command.
     default: op
-  admin.invsee:
-    description: Erlaubt das Öffnen von Spieler-Inventaren
+  plugin.invsee:
+    description: Allows using the invsee command.
     default: op
-  admin.time:
-    description: Erlaubt das Ändern der Zeit
+  plugin.rank:
+    description: Allows managing ranks.
     default: op
-  admin.weather:
-    description: Erlaubt das Ändern des Wetters
+  plugin.setrank:
+    description: Allows setting a player's rank.
+    default: op
+  plugin.home:
+    description: Allows using home commands.
+    default: true
+  plugin.warp:
+    description: Allows using warp commands.
+    default: true
+  plugin.spawn:
+    description: Allows using spawn commands.
+    default: true
+  plugin.teleport:
+    description: Allows using teleport commands.
+    default: op
+  plugin.admin:
+    description: Allows using admin commands like kick, day, night, etc.
+    default: op
+  plugin.craft.lightblock:
+    description: Allows crafting light blocks.
+    default: true
+  plugin.craft.invisibleitemframe:
+    description: Allows crafting invisible item frames.
+    default: true
+  plugin.reload:
+    description: Allows reloading the plugin configuration.
+    default: op
+  plugin.config:
+    description: Allows changing plugin configuration values via command.
+    default: op
+  plugin.gui:
+    description: Allows opening the plugin configuration GUI.
+    default: op
+  plugin.economy.balance:
+    description: Allows checking balance.
+    default: true
+  plugin.economy.balance.others:
+    description: Allows checking others' balance.
+    default: op
+  plugin.economy.pay:
+    description: Allows paying money to other players.
+    default: true
+  plugin.economy.admin:
+    description: Allows using admin economy commands.
+    default: op
+  plugin.messaging.msg:
+    description: Allows sending private messages.
+    default: true
+  plugin.messaging.reply:
+    description: Allows replying to messages.
+    default: true
+  plugin.messaging.ignore:
+    description: Allows ignoring players.
+    default: true
+  plugin.kit.use:
+    description: Allows using kits.
+    default: true
+  plugin.kit.list:
+    description: Allows listing kits.
+    default: true
+  plugin.kit.starter:
+    description: Allows using the starter kit.
+    default: true
+  plugin.kit.tools:
+    description: Allows using the tools kit.
+    default: op
+  plugin.kit.pvp:
+    description: Allows using the PvP kit.
+    default: op
+  plugin.moderation.ban:
+    description: Allows banning players.
+    default: op
+  plugin.moderation.unban:
+    description: Allows unbanning players.
+    default: op
+  plugin.moderation.mute:
+    description: Allows muting players.
+    default: op
+  plugin.moderation.unmute:
+    description: Allows unmuting players.
+    default: op
+  plugin.moderation.warn:
+    description: Allows warning players.
+    default: op
+  plugin.moderation.warnings:
+    description: Allows checking player warnings.
+    default: op
+  plugin.teleport.back:
+    description: Allows using /back command.
+    default: true
+  plugin.teleport.random:
+    description: Allows using /tprandom command.
+    default: true
+  plugin.cooldown.bypass:
+    description: Bypasses all cooldowns.
     default: op

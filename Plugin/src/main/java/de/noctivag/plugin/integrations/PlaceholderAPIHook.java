@@ -82,22 +82,22 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         // Player data placeholders
         switch (identifier.toLowerCase()) {
             case "prefix":
-                String prefix = plugin.getPlayerDataManager().getPrefix(player.getUniqueId());
+                String prefix = plugin.getPlayerDataManager().getPrefix(player.getName());
                 return prefix != null ? prefix : "";
 
             case "suffix":
-                String suffix = plugin.getPlayerDataManager().getSuffix(player.getUniqueId());
+                String suffix = plugin.getPlayerDataManager().getSuffix(player.getName());
                 return suffix != null ? suffix : "";
 
             case "nickname":
             case "nick":
-                String nick = plugin.getPlayerDataManager().getNickname(player.getUniqueId());
+                String nick = plugin.getPlayerDataManager().getNickname(player.getName());
                 return nick != null ? nick : player.getName();
 
             case "displayname":
-                String displayPrefix = plugin.getPlayerDataManager().getPrefix(player.getUniqueId());
-                String displayNick = plugin.getPlayerDataManager().getNickname(player.getUniqueId());
-                String displaySuffix = plugin.getPlayerDataManager().getSuffix(player.getUniqueId());
+                String displayPrefix = plugin.getPlayerDataManager().getPrefix(player.getName());
+                String displayNick = plugin.getPlayerDataManager().getNickname(player.getName());
+                String displaySuffix = plugin.getPlayerDataManager().getSuffix(player.getName());
 
                 StringBuilder displayName = new StringBuilder();
                 if (displayPrefix != null && !displayPrefix.isEmpty()) {
@@ -111,28 +111,28 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
             case "rank":
                 if (plugin.getRankManager() != null) {
-                    String rank = plugin.getRankManager().getPlayerRankName(player.getUniqueId());
+                    String rank = plugin.getRankManager().getHighestRank(player.getUniqueId()).getName();
                     return rank != null ? rank : "default";
                 }
                 return "default";
 
             case "rank_prefix":
                 if (plugin.getRankManager() != null) {
-                    String rankPrefix = plugin.getRankManager().getPlayerRankPrefix(player.getUniqueId());
+                    String rankPrefix = plugin.getRankManager().getHighestRank(player.getUniqueId()).getPrefix();
                     return rankPrefix != null ? rankPrefix : "";
                 }
                 return "";
 
             case "rank_suffix":
                 if (plugin.getRankManager() != null) {
-                    String rankSuffix = plugin.getRankManager().getPlayerRankSuffix(player.getUniqueId());
+                    String rankSuffix = plugin.getRankManager().getHighestRank(player.getUniqueId()).getSuffix();
                     return rankSuffix != null ? rankSuffix : "";
                 }
                 return "";
 
             case "homes_count":
                 if (plugin.getHomeManager() != null) {
-                    return String.valueOf(plugin.getHomeManager().getHomes(player.getUniqueId()).size());
+                    return String.valueOf(plugin.getHomeManager().getHomeCount(player.getUniqueId()));
                 }
                 return "0";
 

@@ -143,77 +143,73 @@ public class JoinMessageManager {
     }
 
     @NotNull
-    public Component getJoinMessage(@NotNull String playerName) {
-        String lowercaseName = playerName.toLowerCase();
-
+    public Component getJoinMessage(@NotNull String playerUuid) {
         // Prüfe Cache
-        Component cached = messageCache.get(lowercaseName);
+        Component cached = messageCache.get(playerUuid);
         if (cached != null) {
             return cached;
         }
 
         // Keine Nachricht wenn deaktiviert
-        if (disabledMessages.contains(lowercaseName)) {
+        if (disabledMessages.contains(playerUuid)) {
             return Component.empty();
         }
 
         // Erstelle und cache die Nachricht
         try {
-            String message = customMessages.getOrDefault(lowercaseName, defaultMessage)
+            String playerName = Objects.requireNonNull(plugin.getServer().getPlayer(UUID.fromString(playerUuid))).getName();
+            String message = customMessages.getOrDefault(playerUuid, defaultMessage)
                 .replace("%player%", playerName);
             Component component = de.noctivag.plugin.utils.ColorUtils.parseColor(message);
 
             // Cache nur wenn die Nachricht nicht zu groß ist
             if (message.length() <= 256) {
-                messageCache.put(lowercaseName, component);
+                messageCache.put(playerUuid, component);
             }
 
             return component;
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING,
-                "Fehler beim Erstellen der Join-Nachricht für " + playerName, e);
-            return Component.text(playerName); // Fallback im Fehlerfall
+                "Fehler beim Erstellen der Join-Nachricht für " + playerUuid, e);
+            return Component.text(playerUuid); // Fallback im Fehlerfall
         }
     }
 
-    public void setCustomMessage(@NotNull String playerName, @NotNull String message) {
-        Objects.requireNonNull(playerName, "PlayerName cannot be null");
+    public void setCustomMessage(@NotNull String playerUuid, @NotNull String message) {
+        Objects.requireNonNull(playerUuid, "Player UUID cannot be null");
         Objects.requireNonNull(message, "Message cannot be null");
 
-        String lowercaseName = playerName.toLowerCase();
-        customMessages.put(lowercaseName, message);
-        messageCache.remove(lowercaseName);
+        customMessages.put(playerUuid, message);
+        messageCache.remove(playerUuid);
     }
 
-    public void removeCustomMessage(@NotNull String playerName) {
-        Objects.requireNonNull(playerName, "PlayerName cannot be null");
-        String lowercaseName = playerName.toLowerCase();
-        customMessages.remove(lowercaseName);
-        messageCache.remove(lowercaseName);
+    public void removeCustomMessage(@NotNull String playerUuid) {
+        Objects.requireNonNull(playerUuid, "Player UUID cannot be null");
+        customMessages.remove(playerUuid);
+        messageCache.remove(playerUuid);
     }
 
-    public boolean hasCustomMessage(@NotNull String playerName) {
-        Objects.requireNonNull(playerName, "PlayerName cannot be null");
-        return customMessages.containsKey(playerName.toLowerCase());
+    public boolean hasCustomMessage(@NotNull String playerUuid) {
+        Objects.requireNonNull(playerUuid, "Player UUID cannot be null");
+        return customMessages.containsKey(playerUuid);
     }
 
-    public boolean isMessageDisabled(@NotNull String playerName) {
-        Objects.requireNonNull(playerName, "PlayerName cannot be null");
-        return disabledMessages.contains(playerName.toLowerCase());
+    public boolean isMessageDisabled(@NotNull String playerUuid) {
+        Objects.requireNonNull(playerUuid, "Player UUID cannot be null");
+        return disabledMessages.contains(playerUuid);
     }
 
-    public void setMessageEnabled(@NotNull String playerName, boolean enabled) {
-        Objects.requireNonNull(playerName, "PlayerName cannot be null");
-        String lowercaseName = playerName.toLowerCase();
+    public void setMessageEnabled(@NotNull String playerUuid, boolean enabled) {
+        Objects.requireNonNull(playerUuid, "Player UUID cannot be null");
 
         synchronized (disabledMessages) {
             if (enabled) {
-                disabledMessages.remove(lowercaseName);
+                disabledMessages.remove(playerUuid);
             } else {
-                disabledMessages.add(lowercaseName);
+                disabledMessages.add(playerUuid);
             }
         }
-        messageCache.remove(lowercaseName);
+        messageCache.remove(playerUuid);
     }
 
     public void setDefaultMessage(@NotNull String message) {

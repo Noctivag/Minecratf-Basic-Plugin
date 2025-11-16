@@ -1,12 +1,12 @@
 package de.noctivag.plugin.commands;
 
+import de.noctivag.plugin.Plugin;
+import de.noctivag.plugin.messages.MessageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,46 +14,51 @@ import java.util.UUID;
 
 public class VanishCommand implements CommandExecutor {
     private final Set<UUID> vanishedPlayers = new HashSet<>();
+    private final MessageManager messageManager;
+    private final Plugin plugin;
+
+    public VanishCommand(Plugin plugin, MessageManager messageManager) {
+        this.plugin = plugin;
+        this.messageManager = messageManager;
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("§cDieser Befehl kann nur von Spielern ausgeführt werden!");
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(messageManager.getError("error.players_only"));
             return true;
         }
 
-        Player player = (Player) sender;
-
         if (!player.hasPermission("plugin.vanish")) {
-            player.sendMessage("§cDu hast keine Berechtigung für diesen Befehl!");
+            player.sendMessage(messageManager.getError("error.no_permission"));
             return true;
         }
 
         UUID playerId = player.getUniqueId();
 
         if (vanishedPlayers.contains(playerId)) {
-            // Spieler ist unsichtbar -> sichtbar machen
+            // Player is vanished -> make visible
             vanishedPlayers.remove(playerId);
-            
-            // Für alle Spieler wieder sichtbar machen
+
+            // Make visible to all players
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-                onlinePlayer.showPlayer(player.getServer().getPluginManager().getPlugin("Plugin"), player);
+                onlinePlayer.showPlayer(plugin, player);
             }
-            
-            player.sendMessage("§aDu bist jetzt §lsichtbar§a!");
+
+            player.sendMessage(messageManager.getMessage("vanish.visible"));
         } else {
-            // Spieler ist sichtbar -> unsichtbar machen
+            // Player is visible -> make vanished
             vanishedPlayers.add(playerId);
-            
-            // Für alle Spieler unsichtbar machen (außer für andere Admins mit Vanish-Permission)
+
+            // Make invisible to all players without permission
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 if (!onlinePlayer.hasPermission("plugin.vanish.see") && !onlinePlayer.equals(player)) {
-                    onlinePlayer.hidePlayer(player.getServer().getPluginManager().getPlugin("Plugin"), player);
+                    onlinePlayer.hidePlayer(plugin, player);
                 }
             }
-            
-            player.sendMessage("§aDu bist jetzt §lunsichtbar§a!");
-            player.sendMessage("§7Andere Admins können dich weiterhin sehen.");
+
+            player.sendMessage(messageManager.getMessage("vanish.invisible"));
+            player.sendMessage(messageManager.getMessage("vanish.admin_see"));
         }
 
         return true;
@@ -62,12 +67,9 @@ public class VanishCommand implements CommandExecutor {
     public boolean isVanished(UUID playerId) {
         return vanishedPlayers.contains(playerId);
     }
-
-    public void removeVanish(UUID playerId) {
-        vanishedPlayers.remove(playerId);
-    }
-
+    
     public Set<UUID> getVanishedPlayers() {
         return new HashSet<>(vanishedPlayers);
     }
 }
+

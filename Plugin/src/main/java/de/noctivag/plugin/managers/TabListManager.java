@@ -1,18 +1,20 @@
 package de.noctivag.plugin.managers;
 
+import de.noctivag.plugin.Plugin;
+import de.noctivag.plugin.messages.MessageManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class TabListManager {
     private final Plugin plugin;
+    private final MessageManager messageManager;
     private int taskId = -1;
 
     public TabListManager(Plugin plugin) {
         this.plugin = plugin;
+        this.messageManager = plugin.getMessageManager();
     }
 
     public void startTabListUpdater() {
@@ -77,32 +79,31 @@ public class TabListManager {
                                    mspt <= 50 ? NamedTextColor.YELLOW : NamedTextColor.RED;
 
         // Header erstellen
-        Component header = Component.text()
-            .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH))
+        Component header = messageManager.getMessage("tablist.header.line1")
             .append(Component.newline())
-            .append(Component.text("  Server Performance  ", NamedTextColor.GOLD, TextDecoration.BOLD))
+            .append(messageManager.getMessage("tablist.header.line2"))
             .append(Component.newline())
-            .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH))
-            .build();
+            .append(messageManager.getMessage("tablist.header.line3"));
 
         // Footer erstellen
-        Component footer = Component.text()
-            .append(Component.text("RAM: ", NamedTextColor.GRAY))
-            .append(Component.text(usedMemory + "MB", ramColor))
-            .append(Component.text(" / ", NamedTextColor.DARK_GRAY))
-            .append(Component.text(maxMemory + "MB", NamedTextColor.GRAY))
-            .append(Component.text(" (" + ramPercentage + "%)", ramColor))
+        Component footer = messageManager.getComponentMessage("tablist.footer.ram",
+                Component.text(usedMemory + "MB", ramColor),
+                Component.text(" / "),
+                Component.text(maxMemory + "MB", NamedTextColor.GRAY),
+                Component.text(" (" + ramPercentage + "%)", ramColor)
+            )
             .append(Component.newline())
-            .append(Component.text("TPS: ", NamedTextColor.GRAY))
-            .append(Component.text(String.format("%.2f", tps), tpsColor))
-            .append(Component.text(" / 20.0", NamedTextColor.DARK_GRAY))
+            .append(messageManager.getComponentMessage("tablist.footer.tps",
+                Component.text(String.format("%.2f", tps), tpsColor),
+                Component.text(" / 20.0")
+            ))
             .append(Component.newline())
-            .append(Component.text("MSPT: ", NamedTextColor.GRAY))
-            .append(Component.text(String.format("%.2f", mspt) + "ms", msptColor))
-            .append(Component.text(" / 50ms", NamedTextColor.DARK_GRAY))
+            .append(messageManager.getComponentMessage("tablist.footer.mspt",
+                Component.text(String.format("%.2f", mspt) + "ms", msptColor),
+                Component.text(" / 50ms")
+            ))
             .append(Component.newline())
-            .append(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH))
-            .build();
+            .append(messageManager.getMessage("tablist.footer.line"));
 
         // Für alle Online-Spieler aktualisieren
         for (Player player : Bukkit.getOnlinePlayers()) {

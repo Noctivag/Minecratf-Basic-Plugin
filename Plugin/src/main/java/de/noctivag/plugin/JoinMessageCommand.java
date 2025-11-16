@@ -1,40 +1,32 @@
 package de.noctivag.plugin;
 
+import de.noctivag.plugin.messages.MessageManager;
 import de.noctivag.plugin.utils.ColorUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.logging.Level;
 
 public class JoinMessageCommand implements CommandExecutor {
-    private final JoinMessageManager messageManager;
+    private final JoinMessageManager joinMessageManager;
+    private final MessageManager messageManager;
     private final Plugin plugin;
 
-    // Vordefinierte Fehlermeldungen als Konstanten
-    private static final Component USAGE_SET = Component.text("Verwendung: /joinmessage set <Spieler> <Nachricht>")
-        .color(NamedTextColor.RED);
-    private static final Component USAGE_REMOVE = Component.text("Verwendung: /joinmessage remove <Spieler>")
-        .color(NamedTextColor.RED);
-    private static final Component USAGE_DEFAULT = Component.text("Verwendung: /joinmessage setdefault <Nachricht>")
-        .color(NamedTextColor.RED);
-
-    public JoinMessageCommand(Plugin plugin, JoinMessageManager messageManager) {
+    public JoinMessageCommand(Plugin plugin, JoinMessageManager joinMessageManager, MessageManager messageManager) {
         this.plugin = plugin;
+        this.joinMessageManager = joinMessageManager;
         this.messageManager = messageManager;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!sender.hasPermission("plugin.joinmessage")) {
-            Component noPermMsg = plugin.getMessageManager() != null ?
-                plugin.getMessageManager().getMessage("no-permission") :
-                Component.text("Keine Berechtigung!").color(NamedTextColor.RED);
-            sender.sendMessage(noPermMsg);
+            sender.sendMessage(messageManager.getError("error.no_permission"));
             return true;
         }
 
@@ -50,21 +42,17 @@ public class JoinMessageCommand implements CommandExecutor {
                 case "toggle", "enable", "disable" -> handleToggle(sender, args);
                 case "setdefault" -> handleSetDefault(sender, args);
                 case "reload" -> {
-                    // reload join message config
                     if (!sender.hasPermission("plugin.joinmessage.reload")) {
-                        sender.sendMessage(Component.text("Dafür hast du keine Berechtigung!").color(NamedTextColor.RED));
+                        sender.sendMessage(messageManager.getError("join_message.reload.no_permission"));
                     } else {
-                        messageManager.reload();
-                        sender.sendMessage(Component.text("Join-Nachrichten neu geladen.").color(NamedTextColor.GREEN));
+                        joinMessageManager.reload();
+                        sender.sendMessage(messageManager.getMessage("join_message.reload.success"));
                     }
                 }
                 default -> sendHelp(sender);
             }
         } catch (Exception e) {
-            sender.sendMessage(Component.text()
-                .content("Ein Fehler ist aufgetreten: ")
-                .color(NamedTextColor.RED)
-                .append(Component.text(e.getMessage())));
+            sender.sendMessage(messageManager.getError("join_message.error.generic", e.getMessage()));
             if (plugin.getConfigManager() != null && plugin.getConfigManager().isDebugMode()) {
                 plugin.getLogger().log(Level.SEVERE, "Exception in JoinMessageCommand", e);
             }
@@ -74,7 +62,7 @@ public class JoinMessageCommand implements CommandExecutor {
 
     private void handleSet(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            sender.sendMessage(USAGE_SET);
+            sender.sendMessage(messageManager.getError("join_message.usage.set"));
             return;
         }
 
@@ -84,113 +72,67 @@ public class JoinMessageCommand implements CommandExecutor {
 
         if (checkExists && Bukkit.getPlayer(playerName) == null &&
             !sender.hasPermission("plugin.joinmessage.bypass")) {
-            sender.sendMessage(Component.text()
-                .content("Spieler nicht gefunden: ")
-                .color(NamedTextColor.RED)
-                .append(Component.text(playerName)));
+            sender.sendMessage(messageManager.getError("join_message.error.player_not_found", playerName));
             return;
         }
 
         String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
-        messageManager.setCustomMessage(playerName, message);
+        joinMessageManager.setCustomMessage(playerName, message);
 
-        sender.sendMessage(Component.text()
-            .content("Join-Nachricht für ")
-            .color(NamedTextColor.GREEN)
-            .append(Component.text(playerName))
-            .append(Component.text(" wurde gesetzt zu: "))
+        sender.sendMessage(messageManager.getMessage("join_message.set.success", playerName)
             .append(ColorUtils.parseColor(message)));
     }
 
     private void handleRemove(CommandSender sender, String[] args) {
         if (args.length != 2) {
-            sender.sendMessage(USAGE_REMOVE);
+            sender.sendMessage(messageManager.getError("join_message.usage.remove"));
             return;
         }
 
         String playerName = args[1].toLowerCase();
-        if (messageManager.hasCustomMessage(playerName)) {
-            messageManager.removeCustomMessage(playerName);
-            sender.sendMessage(Component.text()
-                .content("Join-Nachricht für ")
-                .color(NamedTextColor.GREEN)
-                .append(Component.text(playerName))
-                .append(Component.text(" wurde entfernt.")));
+        if (joinMessageManager.hasCustomMessage(playerName)) {
+            joinMessageManager.removeCustomMessage(playerName);
+            sender.sendMessage(messageManager.getMessage("join_message.remove.success", playerName));
         } else {
-            sender.sendMessage(Component.text()
-                .content("Für ")
-                .color(NamedTextColor.RED)
-                .append(Component.text(playerName))
-                .append(Component.text(" existiert keine benutzerdefinierte Join-Nachricht.")));
+            sender.sendMessage(messageManager.getError("join_message.remove.no_message", playerName));
         }
     }
 
     private void handleToggle(CommandSender sender, String[] args) {
         if (args.length != 2) {
-            sender.sendMessage(Component.text()
-                .content("Verwendung: /joinmessage ")
-                .color(NamedTextColor.RED)
-                .append(Component.text(args.length > 0 ? args[0] : "toggle"))
-                .append(Component.text(" <Spieler>")));
+            sender.sendMessage(messageManager.getError("join_message.usage.toggle", args.length > 0 ? args[0] : "toggle"));
             return;
         }
 
         String playerName = args[1].toLowerCase();
         String action = args[0].toLowerCase();
         boolean shouldEnable = action.equals("enable") ||
-            (action.equals("toggle") && messageManager.isMessageDisabled(playerName));
+            (action.equals("toggle") && joinMessageManager.isMessageDisabled(playerName));
 
-        messageManager.setMessageEnabled(playerName, shouldEnable);
+        joinMessageManager.setMessageEnabled(playerName, shouldEnable);
 
-        sender.sendMessage(Component.text()
-            .content("Join-Nachrichten für ")
-            .color(NamedTextColor.GRAY)
-            .append(Component.text(playerName))
-            .append(Component.text(" wurden "))
-            .append(Component.text(shouldEnable ? "aktiviert" : "deaktiviert")
-                .color(shouldEnable ? NamedTextColor.GREEN : NamedTextColor.RED)));
+        Component statusComponent = shouldEnable ?
+            messageManager.getMessage("join_message.toggle.enabled_status") :
+            messageManager.getMessage("join_message.toggle.disabled_status");
+
+        sender.sendMessage(messageManager.getMessage("join_message.toggle.success", playerName)
+            .append(statusComponent));
     }
 
     private void handleSetDefault(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(USAGE_DEFAULT);
+            sender.sendMessage(messageManager.getError("join_message.usage.setdefault"));
             return;
         }
 
         String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        messageManager.setDefaultMessage(message);
+        joinMessageManager.setDefaultMessage(message);
 
-        sender.sendMessage(Component.text()
-            .content("Standard Join-Nachricht wurde gesetzt zu: ")
-            .color(NamedTextColor.GREEN)
+        sender.sendMessage(messageManager.getMessage("join_message.setdefault.success")
             .append(ColorUtils.parseColor(message)));
     }
 
-    // Statische Komponenten für häufig verwendete Nachrichten
-    private static final Component HELP_HEADER = Component.text("=== Join-Nachrichten Hilfe ===")
-        .color(NamedTextColor.GOLD);
-    private static final Component HELP_COLORS = Component.text("Farbcodes: &#RRGGBB für Hex-Farben, & für Standardfarben")
-        .color(NamedTextColor.GRAY);
-    private static final Component HELP_PLACEHOLDERS = Component.text("Platzhalter: %player% für den Spielernamen")
-        .color(NamedTextColor.GRAY);
-
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(HELP_HEADER);
-
-        String[] commands = {
-            "/joinmessage set <Spieler> <Nachricht> - Setzt eine benutzerdefinierte Join-Nachricht",
-            "/joinmessage remove <Spieler> - Entfernt eine benutzerdefinierte Join-Nachricht",
-            "/joinmessage toggle <Spieler> - Schaltet Join-Nachrichten für einen Spieler um",
-            "/joinmessage enable <Spieler> - Aktiviert Join-Nachrichten für einen Spieler",
-            "/joinmessage disable <Spieler> - Deaktiviert Join-Nachrichten für einen Spieler",
-            "/joinmessage setdefault <Nachricht> - Setzt die Standard Join-Nachricht"
-        };
-
-        for (String cmd : commands) {
-            sender.sendMessage(Component.text(cmd).color(NamedTextColor.YELLOW));
-        }
-
-        sender.sendMessage(HELP_COLORS);
-        sender.sendMessage(HELP_PLACEHOLDERS);
+        messageManager.getMessageList("join_message.help").forEach(sender::sendMessage);
     }
 }

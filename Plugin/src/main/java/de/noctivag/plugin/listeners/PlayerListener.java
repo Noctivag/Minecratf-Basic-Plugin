@@ -3,6 +3,7 @@ package de.noctivag.plugin.listeners;
 import de.noctivag.plugin.Plugin;
 import de.noctivag.plugin.config.ConfigManager;
 import de.noctivag.plugin.utils.ColorUtils;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,7 +12,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
-import net.kyori.adventure.text.Component;
+import org.bukkit.persistence.PersistentDataType;
 
 public class PlayerListener implements Listener {
     private final Plugin plugin;
@@ -22,7 +23,7 @@ public class PlayerListener implements Listener {
         this.config = plugin.getConfigManager();
     }
 
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         
@@ -47,7 +48,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         
@@ -77,13 +78,16 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = org.bukkit.event.EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDismount(EntityDismountEvent event) {
         // Wenn ein Spieler von einem ArmorStand absteigt, entferne den ArmorStand
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            if (plugin.getSitManager() != null && plugin.getSitManager().isSitting(player)) {
-                plugin.getSitManager().unsitPlayer(player);
+        if (event.getEntity() instanceof Player player) {
+            // Check if dismounting from our seat (via PDC)
+            NamespacedKey seatKey = new NamespacedKey(plugin, "sit_seat_owner");
+            if (event.getDismounted().getPersistentDataContainer().has(seatKey, PersistentDataType.STRING)) {
+                if (plugin.getSitManager() != null && plugin.getSitManager().isSitting(player)) {
+                    plugin.getSitManager().unsitPlayer(player);
+                }
             }
         }
     }

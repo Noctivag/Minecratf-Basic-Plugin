@@ -28,6 +28,11 @@ integrations:
   placeholderapi:
     enabled: false # Set to true if you have PlaceholderAPI installed
     register-expansions: true # Register plugin placeholders
+  
+  # Vault Integration - For economy support
+  vault:
+    enabled: false # Set to true if you have Vault installed
+    use-vault-economy: true # Use Vault for economy instead of built-in
 
 # =====================================
 # Database Settings
@@ -63,6 +68,12 @@ modules:
     update-method: individual # individual = better performance, all = legacy method
     update-on-join: true
     update-on-rank-change: true
+    override-other-teams: false # Set to true to override teams from other plugins (not recommended)
+    # QoL: fine-tune nametags
+    name-color: "" # e.g. "#55FF55" or "&a". Empty = keep default
+    hide-vanished-nametags: true # Hide nametags for vanished players
+    nametag-visibility: "always" # always | never | hide-for-other-teams
+    collision: "always" # always | never | push-other-teams
 
   # Tab List Customization
   tablist:
@@ -144,6 +155,21 @@ modules:
     teleport-delay: 3 # seconds for /tpa
     cancel-on-move: true
     max-distance: 0 # 0 = unlimited
+    warmup-time: 3 # seconds warmup before teleport
+    safe-teleport: true # Find safe landing spot
+    
+    # /back command - return to previous location
+    back:
+      enabled: true
+      save-on-death: true
+      save-on-teleport: true
+    
+    # /tprandom command - random teleport
+    random:
+      enabled: true
+      max-distance: 5000
+      min-distance: 100
+      cooldown: 300 # seconds
 
   # Workbench Access Commands
   workbenches:
@@ -165,6 +191,27 @@ modules:
       enabled: true
       allow-on-stairs: true
       allow-on-slabs: true
+      # Vertical offset for sitting position (lower = sit lower)
+      # Recommended between -1.4 and -0.8 depending on seat block
+      y-offset: -1.2
+    
+    crawl:
+      enabled: true
+      # Crawl makes players swim on ground for crawling effect
+      
+    lay:
+      enabled: true
+      # Lay creates invisible armor stand for laying down pose
+      
+    afk:
+      enabled: true
+      broadcast: true # Broadcast when players go AFK/return
+      auto-afk-enabled: true # Automatically mark players as AFK
+      auto-afk-time: 300 # Seconds of inactivity before auto-AFK (0 = disabled)
+      
+    ride:
+      enabled: true
+      # Allow players to ride other players or entities
 
     camera:
       enabled: true
@@ -237,6 +284,59 @@ modules:
     percentage: 0.01 # 1% of players need to sleep
     min-players: 1
 
+  # Economy System
+  economy:
+    enabled: false # Enable economy features
+    starting-balance: 1000.0
+    currency-symbol: "$"
+    currency-name: "Dollar"
+    currency-plural: "Dollars"
+    command-costs:
+      enabled: false # Charge money for commands
+      heal: 100
+      feed: 50
+      home: 10
+      warp: 5
+      tpa: 20
+
+  # Kit System
+  kits:
+    enabled: false # Enable kit system
+    cooldowns:
+      enabled: true
+      persist-on-restart: true
+
+  # Private Messaging System
+  messaging:
+    enabled: false # Enable private messages
+    format: "&7[&dPM&7] &f%sender% &7-> &f%receiver%&7: %message%"
+    sound:
+      enabled: true
+      volume: 0.5
+      pitch: 1.5
+    ignore:
+      enabled: true
+      max-ignored: 50
+
+  # Moderation System
+  moderation:
+    enabled: false # Enable moderation tools
+    ban:
+      enabled: true
+      broadcast: true
+      ip-ban-on-evasion: true
+    mute:
+      enabled: true
+      prevent-commands: true # Prevent muted players from using commands
+      allowed-commands: # Commands muted players can still use
+        - "/msg"
+        - "/help"
+    warn:
+      enabled: true
+      max-warnings: 3
+      auto-ban: true # Auto-ban when max warnings reached
+      warn-expiry: 2592000 # 30 days in seconds (0 = never expire)
+
 # =====================================
 # Cooldown System
 # =====================================
@@ -257,6 +357,8 @@ cooldowns:
 # =====================================
 # Chat Integration
 # =====================================
+# ⚠ IMPORTANT: If you're using DeluxeChat, ChatControl, or EssentialsX Chat,
+#   set chat.enabled to false to avoid conflicts!
 chat:
   enabled: true
   format: "%prefix%%player%%suffix%&7: &f%message%"

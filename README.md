@@ -148,6 +148,8 @@ Open various workbenches without placing blocks:
 - Particle effects (configurable)
 - Custom join/quit messages
 
+> Note: The former `/lay` cosmetic command has been fully removed. A future re-introduction may use a more stable posture simulation or optional packet-based approach via ProtocolLib. Configuration entries referring to `modules.cosmetics.lay` are now ignored.
+
 ### 🎯 Rank Management Commands
 - `/rank` - View your current rank
 - `/rank <player>` - View another player's rank

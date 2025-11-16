@@ -22,11 +22,18 @@ import de.noctivag.plugin.commands.teleport.WarpCommands;
 import de.noctivag.plugin.commands.teleport.SpawnCommand;
 import de.noctivag.plugin.commands.teleport.TeleportCommands;
 import de.noctivag.plugin.commands.admin.AdminCommands;
+import de.noctivag.plugin.permissions.PermissionManager;
+import de.noctivag.plugin.managers.TeleportWarmupManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import de.noctivag.plugin.tabcomplete.JoinMessageTabCompleter;
+import de.noctivag.plugin.crafting.RecipeManager;
+import de.noctivag.plugin.listeners.ItemFrameListener;
+import de.noctivag.plugin.listeners.InvisibleItemFrameListener;
+import de.noctivag.plugin.listeners.VanishListener;
+import de.noctivag.plugin.listeners.entity.GhastSpeedListener;
 
 public final class Plugin extends JavaPlugin {
     private ConfigManager configManager;
@@ -34,8 +41,8 @@ public final class Plugin extends JavaPlugin {
     private DataManager dataManager;
     private PlayerDataManager playerDataManager;
     private MessageManager messageManager;
+    private PermissionManager permissionManager;
     private SitManager sitManager;
-    private SleepManager sleepManager;
     private TabListManager tabListManager;
     private NametagManager nametagManager;
     private TriggerCamCommand triggerCamCommand;
@@ -45,6 +52,12 @@ public final class Plugin extends JavaPlugin {
     private HomeManager homeManager;
     private WarpManager warpManager;
     private SpawnCommand spawnCommand;
+    private RecipeManager recipeManager;
+    
+    // New cosmetic managers
+    private de.noctivag.plugin.managers.CrawlManager crawlManager;
+    private de.noctivag.plugin.managers.AfkManager afkManager;
+    private de.noctivag.plugin.managers.RideManager rideManager;
 
     // New systems
     private ModuleManager moduleManager;
@@ -52,27 +65,53 @@ public final class Plugin extends JavaPlugin {
     private PlaceholderAPIHook placeholderAPIHook;
     private CooldownManager cooldownManager;
     private int autoSaveTask = -1;
+    
+    // New feature managers
+    private de.noctivag.plugin.gui.GuiManager guiManager;
+    private de.noctivag.plugin.gui.ChatInputManager chatInputManager;
+    private de.noctivag.plugin.economy.EconomyManager economyManager;
+    private de.noctivag.plugin.teleport.BackManager backManager;
+    private TeleportWarmupManager teleportWarmupManager;
+    private de.noctivag.plugin.messaging.MessagingManager messagingManager;
+    private de.noctivag.plugin.kits.KitManager kitManager;
+    private de.noctivag.plugin.moderation.ModerationManager moderationManager;
 
     @Override
     public void onEnable() {
         try {
             // Core systems
             this.configManager = new ConfigManager(this);
+            this.permissionManager = new PermissionManager(this);
 
             // Module manager - initialize early to check module states
             this.moduleManager = new ModuleManager(this);
             getLogger().info("Module system initialized");
 
-            // External integrations
-            this.luckPermsHook = new LuckPermsHook(this);
-            if (luckPermsHook.hook()) {
-                getLogger().info("LuckPerms integration enabled!");
+            // External integrations (respect config toggles)
+            if (getConfig().getBoolean("integrations.luckperms.enabled", false)) {
+                this.luckPermsHook = new LuckPermsHook(this);
+                if (luckPermsHook.hook()) {
+                    getLogger().info("LuckPerms integration enabled!");
+                } else {
+                    getLogger().info("LuckPerms not found or failed to hook.");
+                }
+            } else {
+                getLogger().info("LuckPerms integration disabled in config.");
             }
 
-            this.placeholderAPIHook = new PlaceholderAPIHook(this);
-            if (placeholderAPIHook.hook()) {
-                getLogger().info("PlaceholderAPI integration enabled!");
+            if (getConfig().getBoolean("integrations.placeholderapi.enabled", false)
+                    && getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                this.placeholderAPIHook = new PlaceholderAPIHook(this);
+                if (placeholderAPIHook.hook()) {
+                    getLogger().info("PlaceholderAPI integration enabled!");
+                }
+            } else {
+                getLogger().info("PlaceholderAPI integration disabled (missing plugin or disabled in config).");
             }
+
+            // Recipe manager
+            this.recipeManager = new RecipeManager(this);
+            recipeManager.registerRecipes();
 
             // Data managers
             this.dataManager = new DataManager(this);
@@ -82,11 +121,49 @@ public final class Plugin extends JavaPlugin {
 
             // Feature managers
             this.cooldownManager = new CooldownManager(this);
+            
+            // GUI Manager (always enabled for admin config)
+            this.guiManager = new de.noctivag.plugin.gui.GuiManager(this);
+            this.chatInputManager = new de.noctivag.plugin.gui.ChatInputManager(this, guiManager);
+            
+            // New feature managers (module-based)
+            if (moduleManager.isModuleEnabled("modules.economy")) {
+                this.economyManager = new de.noctivag.plugin.economy.EconomyManager(this);
+                getLogger().info("Economy system enabled");
+            }
+            
+            if (moduleManager.isModuleEnabled("modules.teleportation")) {
+                this.backManager = new de.noctivag.plugin.teleport.BackManager(this);
+                this.teleportWarmupManager = new TeleportWarmupManager(this);
+                getLogger().info("Advanced teleportation enabled");
+            }
+            
+            if (moduleManager.isModuleEnabled("modules.messaging")) {
+                this.messagingManager = new de.noctivag.plugin.messaging.MessagingManager(this);
+                getLogger().info("Messaging system enabled");
+            }
+            
+            if (moduleManager.isModuleEnabled("modules.kits")) {
+                this.kitManager = new de.noctivag.plugin.kits.KitManager(this);
+                getLogger().info("Kit system enabled");
+            }
+            
+            if (moduleManager.isModuleEnabled("modules.moderation")) {
+                this.moderationManager = new de.noctivag.plugin.moderation.ModerationManager(this);
+                getLogger().info("Moderation system enabled");
+            }
+            
             if (moduleManager.isModuleEnabled("modules.cosmetics.sit")) {
                 this.sitManager = new SitManager(this);
             }
-            if (moduleManager.isModuleEnabled("modules.sleep")) {
-                this.sleepManager = new SleepManager(this);
+            if (moduleManager.isModuleEnabled("modules.cosmetics.crawl")) {
+                this.crawlManager = new de.noctivag.plugin.managers.CrawlManager(this);
+            }
+            if (moduleManager.isModuleEnabled("modules.cosmetics.afk")) {
+                this.afkManager = new de.noctivag.plugin.managers.AfkManager(this);
+            }
+            if (moduleManager.isModuleEnabled("modules.cosmetics.ride")) {
+                this.rideManager = new de.noctivag.plugin.managers.RideManager(this);
             }
             if (moduleManager.isModuleEnabled("modules.tablist")) {
                 this.tabListManager = new TabListManager(this);
@@ -95,14 +172,13 @@ public final class Plugin extends JavaPlugin {
                 this.nametagManager = new NametagManager(this);
             }
             if (moduleManager.isModuleEnabled("modules.cosmetics.camera")) {
-                this.triggerCamCommand = new TriggerCamCommand();
-                this.triggerCamCommand.setPlugin(this);
+                this.triggerCamCommand = new TriggerCamCommand(this, messageManager);
             }
             if (moduleManager.isModuleEnabled("modules.cosmetics.vanish")) {
-                this.vanishCommand = new VanishCommand();
+                this.vanishCommand = new VanishCommand(this, messageManager);
             }
             if (moduleManager.isModuleEnabled("modules.admin-commands.invsee")) {
-                this.invseeCommand = new InvseeCommand();
+                this.invseeCommand = new InvseeCommand(messageManager);
             }
             if (moduleManager.isModuleEnabled("modules.ranks")) {
                 this.rankManager = new RankManager(this);
@@ -118,6 +194,7 @@ public final class Plugin extends JavaPlugin {
             }
 
             PluginAPI.init(this);
+            de.noctivag.plugin.api.BasicPluginAPI.init(this);
 
             dataManager.loadData();
             joinMessageManager.reload();
@@ -140,6 +217,18 @@ public final class Plugin extends JavaPlugin {
 
             getLogger().info("Plugin fully activated!");
             getLogger().info("Modules enabled: " + countEnabledModules() + " modules active");
+            
+            // Log compatibility information
+            if (getConfig().getBoolean("settings.debug-mode", false)) {
+                getLogger().info(de.noctivag.plugin.utils.PluginCompatibility.getCompatibilityReport());
+            }
+            
+            // Warn about chat plugin conflicts
+            if (moduleManager.isModuleEnabled("chat") && 
+                de.noctivag.plugin.utils.PluginCompatibility.hasChatPluginConflict()) {
+                getLogger().warning("⚠ Chat formatting plugin detected! If you're using DeluxeChat or ChatControl,");
+                getLogger().warning("  set 'chat.enabled: false' in config.yml to avoid conflicts.");
+            }
         } catch (Exception e) {
             getLogger().severe("Error starting plugin: " + e.getMessage());
             e.printStackTrace();
@@ -152,18 +241,38 @@ public final class Plugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new TabListListener(this, playerDataManager, joinMessageManager), this);
         getServer().getPluginManager().registerEvents(new PrefixListener(this, playerDataManager), this);
+        getServer().getPluginManager().registerEvents(new ItemFrameListener(this), this);
+        getServer().getPluginManager().registerEvents(new InvisibleItemFrameListener(this), this);
+        getServer().getPluginManager().registerEvents(new VanishListener(this, vanishCommand), this);
+        getServer().getPluginManager().registerEvents(new GhastSpeedListener(this), this);
+
+        // GUI listener (always registered for config menu)
+        if (guiManager != null) {
+            getServer().getPluginManager().registerEvents(new de.noctivag.plugin.gui.GuiListener(this, guiManager, chatInputManager), this);
+            getServer().getPluginManager().registerEvents(new de.noctivag.plugin.gui.ChatInputListener(this, chatInputManager), this);
+        }
+
+        if (teleportWarmupManager != null) {
+            getServer().getPluginManager().registerEvents(new de.noctivag.plugin.listeners.TeleportWarmupListener(teleportWarmupManager), this);
+        }
 
         if (triggerCamCommand != null) {
             getServer().getPluginManager().registerEvents(new de.noctivag.plugin.listeners.CameraListener(this, triggerCamCommand), this);
         }
 
-        if (sleepManager != null) {
-            getServer().getPluginManager().registerEvents(sleepManager, this);
+        if (vanishCommand != null) {
+            getServer().getPluginManager().registerEvents(new VanishListener(this, vanishCommand), this);
         }
 
         // Register chat listener if chat formatting is enabled
         if (moduleManager.isModuleEnabled("chat")) {
             getServer().getPluginManager().registerEvents(new de.noctivag.plugin.listeners.ChatListener(this), this);
+        }
+        
+        // Register cosmetic listener for new features
+        if (crawlManager != null || afkManager != null || rideManager != null) {
+            getServer().getPluginManager().registerEvents(new de.noctivag.plugin.listeners.CosmeticListener(
+                this, crawlManager, afkManager, rideManager), this);
         }
     }
 
@@ -202,26 +311,86 @@ public final class Plugin extends JavaPlugin {
 
         // Trigger Commands (sit & cam)
         registerTriggerCommands();
+        
+        // New Cosmetic Commands
+        registerCosmeticCommands();
 
         // Rank Commands
         registerRankCommands();
 
         // Teleport Commands
         registerTeleportCommands();
+        registerAdvancedTeleportCommands(); // /back, /tprandom
 
         // Admin Commands (includes vanish & invsee)
         registerAdminCommands();
+
+        // Utility commands (reload)
+        registerUtilityCommands();
+
+        // Root admin command (/plugin)
+        registerPluginAdminCommand();
+        
+        // NEW FEATURE COMMANDS
+        // GUI Config Command
+        registerGuiCommands();
+        
+        // Economy Commands
+        registerEconomyCommands();
+        
+        // Messaging Commands
+        registerMessagingCommands();
+        
+        // Kit Commands
+        registerKitCommands();
+        
+        // Moderation Commands
+        registerModerationCommands();
     }
 
     private void registerTriggerCommands() {
         PluginCommand sitCmd = getCommand("sit");
         if (sitCmd != null) {
-            sitCmd.setExecutor(new TriggerSitCommand(sitManager));
+            sitCmd.setExecutor(new TriggerSitCommand(sitManager, messageManager));
         }
 
         PluginCommand camCmd = getCommand("cam");
         if (camCmd != null) {
             camCmd.setExecutor(triggerCamCommand);
+        }
+    }
+    
+    private void registerCosmeticCommands() {
+        // Hat command
+        PluginCommand hatCmd = getCommand("hat");
+        if (hatCmd != null) {
+            hatCmd.setExecutor(new de.noctivag.plugin.commands.HatCommand(messageManager));
+        }
+        
+        // Crawl command
+        PluginCommand crawlCmd = getCommand("crawl");
+        if (crawlCmd != null && crawlManager != null) {
+            crawlCmd.setExecutor(new de.noctivag.plugin.commands.CrawlCommand(crawlManager, messageManager));
+        }
+        
+        // Lay command removed (future expansion placeholder)
+        
+        // AFK command
+        PluginCommand afkCmd = getCommand("afk");
+        if (afkCmd != null && afkManager != null) {
+            afkCmd.setExecutor(new de.noctivag.plugin.commands.AfkCommand(afkManager, messageManager));
+        }
+        
+        // Skull command
+        PluginCommand skullCmd = getCommand("skull");
+        if (skullCmd != null) {
+            skullCmd.setExecutor(new de.noctivag.plugin.commands.SkullCommand(messageManager));
+        }
+        
+        // Ride command
+        PluginCommand rideCmd = getCommand("ride");
+        if (rideCmd != null && rideManager != null) {
+            rideCmd.setExecutor(new de.noctivag.plugin.commands.RideCommand(rideManager, messageManager));
         }
     }
 
@@ -236,31 +405,31 @@ public final class Plugin extends JavaPlugin {
         PluginCommand joinMessageCmd = getCommand("joinmessage");
 
         if (prefixCmd != null) {
-            prefixCmd.setExecutor(new PrefixCommand(playerDataManager, nametagManager));
+            prefixCmd.setExecutor(new PrefixCommand(playerDataManager, nametagManager, messageManager));
         }
         if (unprefixCmd != null) {
-            unprefixCmd.setExecutor(new UnPrefixCommand(playerDataManager, nametagManager));
+            unprefixCmd.setExecutor(new UnPrefixCommand(playerDataManager, nametagManager, messageManager));
         }
         if (suffixCmd != null) {
-            suffixCmd.setExecutor(new SuffixCommand(playerDataManager, nametagManager));
+            suffixCmd.setExecutor(new SuffixCommand(playerDataManager, nametagManager, messageManager));
         }
         if (unsuffixCmd != null) {
-            unsuffixCmd.setExecutor(new UnSuffixCommand(playerDataManager, nametagManager));
+            unsuffixCmd.setExecutor(new UnSuffixCommand(playerDataManager, nametagManager, messageManager));
         }
         if (nickCmd != null) {
-            nickCmd.setExecutor(new NickCommand(playerDataManager, nametagManager));
+            nickCmd.setExecutor(new NickCommand(playerDataManager, nametagManager, messageManager));
         }
         if (unnickCmd != null) {
-            unnickCmd.setExecutor(new UnNickCommand(playerDataManager, nametagManager));
+            unnickCmd.setExecutor(new UnNickCommand(playerDataManager, nametagManager, messageManager));
         }
         if (joinMessageCmd != null) {
-            joinMessageCmd.setExecutor(new JoinMessageCommand(this, joinMessageManager));
+            joinMessageCmd.setExecutor(new JoinMessageCommand(this, joinMessageManager, messageManager));
             joinMessageCmd.setTabCompleter(new JoinMessageTabCompleter());
         }
     }
 
     private void registerWorkbenchCommands() {
-        WorkbenchCommand workbenchExecutor = new WorkbenchCommand();
+        WorkbenchCommand workbenchExecutor = new WorkbenchCommand(messageManager, permissionManager);
         String[] workbenchCommands = {
             "craftingtable", "anvil", "enderchest", "grindstone",
             "smithingtable", "stonecutter", "loom", "cartography"
@@ -275,7 +444,7 @@ public final class Plugin extends JavaPlugin {
     }
 
     private void registerBasicCommands() {
-        BasicCommands basicExecutor = new BasicCommands(this);
+        BasicCommands basicExecutor = new BasicCommands(this, messageManager, permissionManager);
         String[] basicCommands = {
             "heal", "feed", "clearinventory", "fly",
             "gmc", "gms", "gmsp"
@@ -332,7 +501,7 @@ public final class Plugin extends JavaPlugin {
         }
 
         // Teleport commands
-        TeleportCommands teleportCommands = new TeleportCommands(this);
+        TeleportCommands teleportCommands = new TeleportCommands(this, teleportWarmupManager);
         String[] tpCommandNames = {"tp", "tpa", "tphere", "tpaccept", "tpdeny"};
         for (String cmd : tpCommandNames) {
             PluginCommand command = getCommand(cmd);
@@ -350,7 +519,7 @@ public final class Plugin extends JavaPlugin {
         }
         
         // Admin commands from feature branch
-        AdminCommands adminCommands = new AdminCommands();
+        AdminCommands adminCommands = new AdminCommands(messageManager);
         String[] adminCommandNames = {"kick", "invsee", "day", "night", "sun", "rain"};
         for (String cmd : adminCommandNames) {
             PluginCommand command = getCommand(cmd);
@@ -362,6 +531,109 @@ public final class Plugin extends JavaPlugin {
                     command.setExecutor(adminCommands);
                 }
             }
+        }
+    }
+
+    private void registerUtilityCommands() {
+        PluginCommand reloadCmd = getCommand("pluginreload");
+        if (reloadCmd != null) {
+            reloadCmd.setExecutor(new de.noctivag.plugin.commands.ReloadCommand(this));
+        }
+    }
+
+    private void registerPluginAdminCommand() {
+        PluginCommand root = getCommand("plugin");
+        if (root != null) {
+            root.setExecutor(new de.noctivag.plugin.commands.PluginAdminCommand(this));
+            root.setTabCompleter(new de.noctivag.plugin.tabcomplete.PluginAdminTabCompleter(this));
+        }
+    }
+    
+    // NEW FEATURE COMMAND REGISTRATION METHODS
+    
+    private void registerGuiCommands() {
+        if (guiManager == null) return;
+        
+        PluginCommand configCmd = getCommand("config");
+        if (configCmd != null) {
+            configCmd.setExecutor(new de.noctivag.plugin.commands.ConfigCommand(this, guiManager));
+        }
+    }
+    
+    private void registerEconomyCommands() {
+        if (economyManager == null) return;
+        
+        de.noctivag.plugin.commands.economy.EconomyCommands ecoCommands = 
+            new de.noctivag.plugin.commands.economy.EconomyCommands(this, economyManager);
+        
+        String[] ecoCommandNames = {"balance", "bal", "pay", "eco"};
+        for (String cmd : ecoCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(ecoCommands);
+            }
+        }
+    }
+    
+    private void registerMessagingCommands() {
+        if (messagingManager == null) return;
+        
+        de.noctivag.plugin.commands.messaging.MessagingCommands msgCommands =
+            new de.noctivag.plugin.commands.messaging.MessagingCommands(this, messagingManager);
+        
+        String[] msgCommandNames = {"msg", "tell", "whisper", "reply", "r", "ignore"};
+        for (String cmd : msgCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(msgCommands);
+            }
+        }
+    }
+    
+    private void registerKitCommands() {
+        if (kitManager == null) return;
+        
+        de.noctivag.plugin.commands.kits.KitCommand kitCommand =
+            new de.noctivag.plugin.commands.kits.KitCommand(this, kitManager);
+        
+        PluginCommand kitCmd = getCommand("kit");
+        if (kitCmd != null) {
+            kitCmd.setExecutor(kitCommand);
+        }
+        
+        PluginCommand kitsCmd = getCommand("kits");
+        if (kitsCmd != null) {
+            kitsCmd.setExecutor(kitCommand);
+        }
+    }
+    
+    private void registerModerationCommands() {
+        if (moderationManager == null) return;
+        
+        de.noctivag.plugin.commands.moderation.ModerationCommands modCommands =
+            new de.noctivag.plugin.commands.moderation.ModerationCommands(this, moderationManager);
+        
+        String[] modCommandNames = {"ban", "tempban", "unban", "mute", "unmute", "warn", "warnings"};
+        for (String cmd : modCommandNames) {
+            PluginCommand command = getCommand(cmd);
+            if (command != null) {
+                command.setExecutor(modCommands);
+            }
+        }
+    }
+    
+    // Also register /back and /tprandom for advanced teleportation
+    private void registerAdvancedTeleportCommands() {
+        if (backManager != null) {
+            PluginCommand backCmd = getCommand("back");
+            if (backCmd != null) {
+                backCmd.setExecutor(new de.noctivag.plugin.commands.teleport.BackCommand(this, backManager));
+            }
+        }
+        
+        PluginCommand tprandomCmd = getCommand("tprandom");
+        if (tprandomCmd != null && getConfig().getBoolean("modules.teleportation.random.enabled", true)) {
+            tprandomCmd.setExecutor(new de.noctivag.plugin.commands.teleport.RandomTeleportCommand(this));
         }
     }
 
@@ -386,6 +658,15 @@ public final class Plugin extends JavaPlugin {
         if (sitManager != null) {
             sitManager.removeAllSeats();
         }
+        if (crawlManager != null) {
+            crawlManager.stopAll();
+        }
+        if (afkManager != null) {
+            afkManager.cleanup();
+        }
+        if (rideManager != null) {
+            rideManager.cleanup();
+        }
         if (triggerCamCommand != null) {
             triggerCamCommand.restoreAllPlayers();
         }
@@ -400,6 +681,15 @@ public final class Plugin extends JavaPlugin {
         }
         if (cooldownManager != null) {
             cooldownManager.saveCooldowns();
+        }
+        if (economyManager != null) {
+            economyManager.save();
+        }
+        if (kitManager != null) {
+            kitManager.saveKits();
+        }
+        if (moderationManager != null) {
+            moderationManager.save();
         }
         if (rankManager != null) {
             // RankManager saves automatically to database
@@ -424,6 +714,10 @@ public final class Plugin extends JavaPlugin {
         return messageManager;
     }
 
+    public PermissionManager getPermissionManager() {
+        return permissionManager;
+    }
+
     public PlayerDataManager getPlayerDataManager() {
         return playerDataManager;
     }
@@ -438,6 +732,10 @@ public final class Plugin extends JavaPlugin {
 
     public NametagManager getNametagManager() {
         return nametagManager;
+    }
+
+    public VanishCommand getVanishCommand() {
+        return vanishCommand;
     }
 
     public TriggerCamCommand getTriggerCamCommand() {
@@ -497,6 +795,19 @@ public final class Plugin extends JavaPlugin {
                 }
                 if (cooldownManager != null && cooldownManager.isEnabled()) {
                     cooldownManager.saveCooldowns();
+                }
+                if (economyManager != null) {
+                    economyManager.save();
+                }
+                if (kitManager != null) {
+                    kitManager.saveKits();
+                }
+                if (moderationManager != null) {
+                    moderationManager.save();
+                }
+                if (configManager != null) {
+                    // Ensure config changes (e.g., via GUI) persist periodically
+                    configManager.saveConfig();
                 }
 
                 if (getConfig().getBoolean("settings.debug-mode", false)) {
